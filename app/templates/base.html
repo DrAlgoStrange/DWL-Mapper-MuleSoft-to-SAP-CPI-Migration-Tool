@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}DWL Mapper{% endblock %} — CPI Migration Tool</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f5f7;
+      --surface: #ffffff;
+      --surface-2: #f5f5f7;
+      --surface-3: #e8e8ed;
+      --border: rgba(0,0,0,0.08);
+      --border-dark: rgba(0,0,0,0.15);
+      --text-primary: #1d1d1f;
+      --text-secondary: #6e6e73;
+      --text-tertiary: #aeaeb2;
+      --accent: #0071e3;
+      --accent-hover: #0077ed;
+      --accent-light: #e8f0fe;
+      --success: #34c759;
+      --warning: #ff9f0a;
+      --danger: #ff3b30;
+      --danger-light: #fff1f0;
+      --font-display: 'Figtree', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+      --radius: 12px;
+      --radius-lg: 18px;
+      --radius-xl: 24px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow: 0 4px 16px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.06);
+      --shadow-xl: 0 24px 60px rgba(0,0,0,0.16);
+      --nav-height: 52px;
+      --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* ── Navigation ──────────────────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      height: var(--nav-height);
+      background: rgba(255,255,255,0.82);
+      backdrop-filter: blur(20px) saturate(1.8);
+      -webkit-backdrop-filter: blur(20px) saturate(1.8);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center;
+    }
+    .nav-inner {
+      max-width: 1200px; width: 100%; margin: 0 auto;
+      padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-brand {
+      font-family: var(--font-display);
+      font-weight: 700; font-size: 17px;
+      color: var(--text-primary);
+      text-decoration: none; letter-spacing: -0.3px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .nav-brand span.dot { color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 6px; }
+    .nav-link {
+      font-size: 14px; font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none; padding: 6px 14px;
+      border-radius: 20px;
+      transition: all var(--transition);
+    }
+    .nav-link:hover { color: var(--text-primary); background: var(--surface-3); }
+    .nav-link.active { color: var(--accent); background: var(--accent-light); }
+    .nav-user {
+      font-size: 13px; font-weight: 500; color: var(--text-secondary);
+      padding: 4px 12px; border-radius: 20px;
+      border: 1px solid var(--border-dark);
+      background: var(--surface);
+    }
+
+    /* ── Layout ──────────────────────────────────────────────────── */
+    .container {
+      max-width: 1200px; margin: 0 auto;
+      padding: 0 24px;
+    }
+    .page-header {
+      padding: 48px 0 32px;
+    }
+    .page-header h1 {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 700; letter-spacing: -1px;
+      color: var(--text-primary); line-height: 1.1;
+    }
+    .page-header p {
+      margin-top: 10px; font-size: 17px;
+      color: var(--text-secondary); font-weight: 400;
+    }
+
+    /* ── Cards ───────────────────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: box-shadow var(--transition), transform var(--transition);
+    }
+    .card:hover { box-shadow: var(--shadow); }
+    .card-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 17px; font-weight: 600;
+      color: var(--text-primary); letter-spacing: -0.2px;
+    }
+    .card-body { padding: 24px; }
+
+    /* ── Buttons ──────────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--font-body);
+      font-size: 15px; font-weight: 500;
+      padding: 10px 20px; border-radius: 980px;
+      border: none; cursor: pointer;
+      text-decoration: none;
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: var(--accent); color: #fff;
+    }
+    .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,113,227,0.35); }
+    .btn-secondary {
+      background: var(--surface-3); color: var(--text-primary);
+      border: 1px solid var(--border-dark);
+    }
+    .btn-secondary:hover { background: var(--surface-2); transform: translateY(-1px); }
+    .btn-danger {
+      background: var(--danger-light); color: var(--danger);
+      border: 1px solid rgba(255,59,48,0.2);
+    }
+    .btn-danger:hover { background: #ffe5e3; }
+    .btn-sm { font-size: 13px; padding: 7px 14px; }
+    .btn-lg { font-size: 17px; padding: 14px 28px; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+
+    /* ── Forms ───────────────────────────────────────────────────── */
+    .form-group { margin-bottom: 20px; }
+    label {
+      display: block; font-size: 13px; font-weight: 600;
+      color: var(--text-secondary); margin-bottom: 6px;
+      letter-spacing: 0.2px; text-transform: uppercase;
+    }
+    input[type=text], input[type=email], input[type=password],
+    input[type=number], textarea, select {
+      width: 100%; padding: 12px 16px;
+      font-family: var(--font-body); font-size: 15px;
+      color: var(--text-primary);
+      background: var(--surface);
+      border: 1.5px solid var(--border-dark);
+      border-radius: var(--radius);
+      outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      appearance: none;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(0,113,227,0.12);
+    }
+    input.error, textarea.error { border-color: var(--danger); }
+    input.error:focus { box-shadow: 0 0 0 4px rgba(255,59,48,0.12); }
+    textarea { resize: vertical; min-height: 100px; }
+    .field-error {
+      font-size: 12px; color: var(--danger);
+      margin-top: 4px; display: none;
+    }
+    .field-error.visible { display: block; }
+
+    /* ── Mono textarea for code ───────────────────────────────────── */
+    textarea.mono {
+      font-family: var(--font-mono);
+      font-size: 13px; line-height: 1.6;
+      background: #1a1a2e; color: #a8d8ea;
+      border-color: #2d2d44;
+      min-height: 200px;
+    }
+    textarea.mono:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(0,113,227,0.15);
+    }
+
+    /* ── Alerts / Toasts ─────────────────────────────────────────── */
+    .alert {
+      padding: 14px 18px; border-radius: var(--radius);
+      font-size: 14px; font-weight: 500;
+      margin-bottom: 16px;
+      display: flex; align-items: flex-start; gap: 10px;
+    }
+    .alert-success { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+    .alert-error   { background: var(--danger-light); color: #991b1b; border: 1px solid #fecaca; }
+    .alert-info    { background: var(--accent-light); color: #1e3a8a; border: 1px solid #bfdbfe; }
+    .alert-warning { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+
+    /* ── Toast notifications ─────────────────────────────────────── */
+    #toast-container {
+      position: fixed; bottom: 24px; right: 24px;
+      z-index: 9999; display: flex; flex-direction: column; gap: 10px;
+      pointer-events: none;
+    }
+    .toast {
+      background: var(--text-primary); color: #fff;
+      padding: 14px 20px; border-radius: var(--radius);
+      font-size: 14px; font-weight: 500;
+      box-shadow: var(--shadow-lg);
+      animation: toast-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      pointer-events: auto;
+      display: flex; align-items: center; gap: 10px;
+      max-width: 360px;
+    }
+    .toast.success { background: #166534; }
+    .toast.error   { background: #991b1b; }
+    .toast.warning { background: #92400e; }
+    .toast.fade-out { animation: toast-out 0.3s ease forwards; }
+
+    @keyframes toast-in {
+      from { opacity: 0; transform: translateY(16px) scale(0.95); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes toast-out {
+      from { opacity: 1; transform: translateY(0); }
+      to   { opacity: 0; transform: translateY(8px); }
+    }
+
+    /* ── Badge / Chip ─────────────────────────────────────────────── */
+    .badge {
+      display: inline-flex; align-items: center;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.3px;
+      padding: 3px 10px; border-radius: 20px; text-transform: uppercase;
+    }
+    .badge-blue    { background: var(--accent-light); color: var(--accent); }
+    .badge-green   { background: #dcfce7; color: #166534; }
+    .badge-orange  { background: #fff7ed; color: #c2410c; }
+    .badge-red     { background: var(--danger-light); color: var(--danger); }
+    .badge-gray    { background: var(--surface-3); color: var(--text-secondary); }
+
+    /* ── Loader ───────────────────────────────────────────────────── */
+    .spinner {
+      width: 20px; height: 20px;
+      border: 2.5px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+    .spinner.dark {
+      border-color: rgba(0,0,0,0.1);
+      border-top-color: var(--accent);
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Section divider ──────────────────────────────────────────── */
+    .section-sep {
+      height: 1px; background: var(--border);
+      margin: 32px 0;
+    }
+
+    /* ── Empty state ──────────────────────────────────────────────── */
+    .empty-state {
+      text-align: center; padding: 64px 24px;
+      color: var(--text-secondary);
+    }
+    .empty-state .icon { font-size: 48px; margin-bottom: 16px; opacity: 0.6; }
+    .empty-state h3 {
+      font-size: 20px; font-weight: 600;
+      color: var(--text-primary); margin-bottom: 8px;
+    }
+    .empty-state p { font-size: 15px; max-width: 360px; margin: 0 auto 24px; }
+
+    /* ── Responsive ───────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .container { padding: 0 16px; }
+      .nav-inner { padding: 0 16px; }
+      .page-header { padding: 32px 0 20px; }
+      .card-body { padding: 16px; }
+      .btn-lg { font-size: 15px; padding: 12px 22px; }
+    }
+
+    /* ── Page transitions ─────────────────────────────────────────── */
+    .page-fade {
+      animation: page-in 0.4s ease forwards;
+    }
+    @keyframes page-in {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Scrollbar ────────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-tertiary); }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+{% if current_user.is_authenticated %}
+<nav>
+  <div class="nav-inner">
+    <a href="{{ url_for('main.home') }}" class="nav-brand">
+      ⟨/⟩ DWL<span class="dot">.</span>Mapper
+    </a>
+    <div class="nav-links">
+      <a href="{{ url_for('main.home') }}" class="nav-link {% if request.endpoint == 'main.home' %}active{% endif %}">Dashboard</a>
+      <a href="{{ url_for('main.new_project') }}" class="nav-link {% if request.endpoint == 'main.new_project' %}active{% endif %}">New Project</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span class="nav-user">{{ current_user.full_name }}</span>
+      <a href="{{ url_for('auth.logout') }}" class="btn btn-secondary btn-sm">Sign Out</a>
+    </div>
+  </div>
+</nav>
+{% endif %}
+
+<div class="page-fade">
+  {% block content %}{% endblock %}
+</div>
+
+<div id="toast-container"></div>
+
+<script>
+  // ── Toast utility ──────────────────────────────────────────────────────
+  function showToast(message, type = 'default', duration = 4000) {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    const icons = { success: '✓', error: '✕', warning: '⚠', default: 'ℹ' };
+    toast.innerHTML = `<span>${icons[type] || 'ℹ'}</span><span>${message}</span>`;
+    container.appendChild(toast);
+    setTimeout(() => {
+      toast.classList.add('fade-out');
+      toast.addEventListener('animationend', () => toast.remove());
+    }, duration);
+  }
+
+  // ── Fetch helper with error handling ──────────────────────────────────
+  async function apiFetch(url, options = {}) {
+    try {
+      const res = await fetch(url, {
+        headers: { 'Content-Type': 'application/json', ...options.headers },
+        ...options
+      });
+      const data = await res.json();
+      return { ok: res.ok, status: res.status, data };
+    } catch (err) {
+      console.error('API error:', err);
+      return { ok: false, status: 0, data: { message: err.message } };
+    }
+  }
+</script>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>

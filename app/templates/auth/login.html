@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DWL Mapper — Sign In</title>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f5f5f7; --surface: #fff;
+      --border: rgba(0,0,0,0.1); --border-dark: rgba(0,0,0,0.18);
+      --text: #1d1d1f; --muted: #6e6e73; --light: #aeaeb2;
+      --accent: #0071e3; --accent-hover: #0077ed;
+      --accent-light: rgba(0,113,227,0.08);
+      --danger: #ff3b30; --success: #34c759;
+      --font-d: 'Figtree', sans-serif;
+      --font-b: 'Inter', sans-serif;
+      --r: 14px; --r-lg: 20px;
+      --sh: 0 4px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+      --sh-xl: 0 24px 60px rgba(0,0,0,0.14);
+      --t: 0.25s cubic-bezier(0.4,0,0.2,1);
+    }
+    html { -webkit-font-smoothing: antialiased; }
+    body {
+      font-family: var(--font-b);
+      background: var(--bg); color: var(--text);
+      min-height: 100vh;
+      display: grid; grid-template-columns: 1fr 1fr;
+    }
+
+    /* ── Left panel ─────────────────────────────────────────────── */
+    .left-panel {
+      background: linear-gradient(145deg, #0f0f23 0%, #1a1a3e 40%, #0d2157 100%);
+      display: flex; flex-direction: column;
+      justify-content: space-between; padding: 48px;
+      position: relative; overflow: hidden;
+    }
+    .left-panel::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 30%, rgba(0,113,227,0.25) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 80% at 80% 80%, rgba(88,28,135,0.2) 0%, transparent 70%);
+    }
+    .left-content { position: relative; z-index: 1; }
+    .brand {
+      font-family: var(--font-d); font-weight: 800; font-size: 22px;
+      color: white; letter-spacing: -0.5px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .brand .dot { color: #60a5fa; }
+    .hero-text {
+      margin-top: 80px;
+    }
+    .hero-text h1 {
+      font-family: var(--font-d); font-weight: 800;
+      font-size: clamp(32px, 3.5vw, 48px);
+      color: white; line-height: 1.1; letter-spacing: -1.5px;
+    }
+    .hero-text h1 span { color: #60a5fa; }
+    .hero-text p {
+      margin-top: 18px; font-size: 16px; font-weight: 400;
+      color: rgba(255,255,255,0.6); line-height: 1.7;
+      max-width: 380px;
+    }
+    .features {
+      margin-top: 48px; display: flex; flex-direction: column; gap: 14px;
+    }
+    .feature-item {
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .feature-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: rgba(255,255,255,0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; flex-shrink: 0; margin-top: 1px;
+    }
+    .feature-text strong {
+      display: block; font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.9);
+    }
+    .feature-text span {
+      font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.5;
+    }
+    .left-footer {
+      position: relative; z-index: 1;
+      font-size: 12px; color: rgba(255,255,255,0.35);
+    }
+
+    /* ── Right panel / Form ─────────────────────────────────────── */
+    .right-panel {
+      display: flex; align-items: center; justify-content: center;
+      padding: 48px 32px;
+      background: var(--bg);
+    }
+    .form-container {
+      width: 100%; max-width: 420px;
+    }
+    .tab-bar {
+      display: flex; background: var(--surface);
+      border: 1.5px solid var(--border-dark);
+      border-radius: 980px; padding: 3px; margin-bottom: 32px;
+      box-shadow: var(--sh);
+    }
+    .tab-btn {
+      flex: 1; padding: 9px; border-radius: 980px; border: none;
+      background: none; cursor: pointer;
+      font-family: var(--font-b); font-size: 14px; font-weight: 600;
+      color: var(--muted);
+      transition: all var(--t);
+    }
+    .tab-btn.active {
+      background: var(--accent); color: white;
+      box-shadow: 0 2px 8px rgba(0,113,227,0.35);
+    }
+
+    .form-panel { display: none; }
+    .form-panel.active { display: block; animation: fadeSlide 0.3s ease; }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-title {
+      font-family: var(--font-d); font-size: 26px; font-weight: 700;
+      letter-spacing: -0.6px; color: var(--text); margin-bottom: 6px;
+    }
+    .form-subtitle {
+      font-size: 14px; color: var(--muted); margin-bottom: 28px;
+    }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-group { margin-bottom: 16px; }
+    label {
+      display: block; font-size: 12px; font-weight: 600;
+      color: var(--muted); margin-bottom: 6px;
+      letter-spacing: 0.3px; text-transform: uppercase;
+    }
+    input {
+      width: 100%; padding: 11px 14px;
+      font-family: var(--font-b); font-size: 15px; color: var(--text);
+      background: var(--surface);
+      border: 1.5px solid var(--border-dark);
+      border-radius: 10px; outline: none;
+      transition: border-color var(--t), box-shadow var(--t);
+      appearance: none;
+    }
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(0,113,227,0.12);
+    }
+    input.err { border-color: var(--danger); }
+    input.err:focus { box-shadow: 0 0 0 4px rgba(255,59,48,0.12); }
+    .err-msg {
+      font-size: 12px; color: var(--danger);
+      margin-top: 4px; display: none;
+    }
+    .err-msg.show { display: block; }
+
+    .form-alert {
+      padding: 12px 16px; border-radius: 10px;
+      font-size: 13px; font-weight: 500;
+      margin-bottom: 20px; display: none;
+    }
+    .form-alert.error { background: #fff1f0; color: #991b1b; border: 1px solid #fecaca; display: flex; gap: 8px; }
+    .form-alert.success { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; display: flex; gap: 8px; }
+
+    .btn-submit {
+      width: 100%; padding: 13px;
+      font-family: var(--font-b); font-size: 15px; font-weight: 600;
+      background: var(--accent); color: white;
+      border: none; border-radius: 980px; cursor: pointer;
+      transition: all var(--t);
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      margin-top: 8px;
+    }
+    .btn-submit:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,113,227,0.35); }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2.5px solid rgba(255,255,255,0.4);
+      border-top-color: white;
+      border-radius: 50%; animation: spin 0.7s linear infinite;
+      display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .hint { font-size: 12px; color: var(--light); margin-top: 5px; }
+
+    /* ── Responsive ─────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      body { grid-template-columns: 1fr; }
+      .left-panel { display: none; }
+      .right-panel { padding: 40px 24px; min-height: 100vh; }
+    }
+    @media (max-width: 480px) {
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Left Panel -->
+<div class="left-panel">
+  <div class="left-content">
+    <div class="brand">⟨/⟩ DWL<span class="dot">.</span>Mapper</div>
+    <div class="hero-text">
+      <h1>MuleSoft → SAP CPI<br><span>Migration Made Simple</span></h1>
+      <p>Paste your DataWeave scripts and let AI generate a complete CPI Mapping Sheet — ready to replicate in Graphical Mapping.</p>
+    </div>
+    <div class="features">
+      <div class="feature-item">
+        <div class="feature-icon">🔍</div>
+        <div class="feature-text">
+          <strong>DWL Intelligence</strong>
+          <span>AI understands complex DataWeave transformation logic including conditionals, filters & lookups.</span>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">📊</div>
+        <div class="feature-text">
+          <strong>Excel Mapping Sheet</strong>
+          <span>Generates a professional .xlsx mapping file with colour-coded transformation types.</span>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🔗</div>
+        <div class="feature-text">
+          <strong>Multi-Step DWL Support</strong>
+          <span>Combine multiple DWL steps into one unified CPI mapping — exactly how CPI works.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="left-footer">© 2025 J&amp;J Technology. Internal Tool.</div>
+</div>
+
+<!-- Right Panel / Form -->
+<div class="right-panel">
+  <div class="form-container">
+
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('login')">Sign In</button>
+      <button class="tab-btn" onclick="switchTab('register')">Create Account</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div class="form-panel active" id="panel-login">
+      <div class="form-title">Welcome back</div>
+      <div class="form-subtitle">Sign in with your J&J credentials</div>
+
+      <div class="form-alert" id="login-alert"></div>
+
+      <div class="form-group">
+        <label>J&J Email</label>
+        <input type="email" id="login-email" placeholder="you@its.jnj.com" autocomplete="email" />
+        <span class="err-msg" id="login-email-err"></span>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" />
+        <span class="err-msg" id="login-password-err"></span>
+      </div>
+
+      <button class="btn-submit" id="login-btn" onclick="doLogin()">
+        <div class="spinner" id="login-spinner"></div>
+        <span id="login-btn-text">Sign In</span>
+      </button>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div class="form-panel" id="panel-register">
+      <div class="form-title">Create account</div>
+      <div class="form-subtitle">Join to start migrating your MuleSoft APIs</div>
+
+      <div class="form-alert" id="reg-alert"></div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" id="reg-fullname" placeholder="Jane Doe" />
+          <span class="err-msg" id="err-full_name"></span>
+        </div>
+        <div class="form-group">
+          <label>Project Name *</label>
+          <input type="text" id="reg-project" placeholder="MULE-MIGRATION-Q4" />
+          <span class="err-msg" id="err-project_name"></span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>J&J Email *</label>
+        <input type="email" id="reg-email" placeholder="you@its.jnj.com" autocomplete="email" />
+        <span class="err-msg" id="err-email"></span>
+      </div>
+
+      <div class="form-group">
+        <label>WWID <span style="text-transform:none;font-weight:400;color:var(--light)">(numbers only)</span></label>
+        <input type="text" id="reg-wwid" placeholder="1234567" inputmode="numeric" />
+        <span class="err-msg" id="err-wwid"></span>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Password *</label>
+          <input type="password" id="reg-password" placeholder="••••••••" />
+          <span class="err-msg" id="err-password"></span>
+          <div class="hint">8+ chars, 1 uppercase, 1 special (!@#$%^&*?)</div>
+        </div>
+        <div class="form-group">
+          <label>Confirm Password *</label>
+          <input type="password" id="reg-confirm" placeholder="••••••••" />
+          <span class="err-msg" id="err-confirm_password"></span>
+        </div>
+      </div>
+
+      <button class="btn-submit" id="reg-btn" onclick="doRegister()">
+        <div class="spinner" id="reg-spinner"></div>
+        <span id="reg-btn-text">Create Account</span>
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach((b, i) => {
+      b.classList.toggle('active', (i === 0 && tab === 'login') || (i === 1 && tab === 'register'));
+    });
+    document.getElementById('panel-login').classList.toggle('active', tab === 'login');
+    document.getElementById('panel-register').classList.toggle('active', tab === 'register');
+  }
+
+  function clearErrors(fields) {
+    fields.forEach(id => {
+      const el = document.getElementById('err-' + id) || document.getElementById('login-' + id + '-err');
+      if (el) el.classList.remove('show');
+      const inp = document.getElementById('login-' + id) || document.getElementById('reg-' + id.replace('_name','name').replace('project_name','project'));
+      if (inp) inp.classList.remove('err');
+    });
+  }
+
+  function showErrors(errors, prefix = '') {
+    Object.entries(errors).forEach(([field, msg]) => {
+      const errEl = document.getElementById('err-' + field);
+      const inpEl = document.getElementById('reg-' + field.replace('full_name','fullname').replace('project_name','project').replace('confirm_password','confirm'));
+      if (errEl) { errEl.textContent = msg; errEl.classList.add('show'); }
+      if (inpEl) inpEl.classList.add('err');
+    });
+  }
+
+  function setLoading(btnId, spinnerId, textId, loading, text = '') {
+    const btn = document.getElementById(btnId);
+    const sp  = document.getElementById(spinnerId);
+    const tx  = document.getElementById(textId);
+    btn.disabled = loading;
+    sp.style.display = loading ? 'block' : 'none';
+    if (text) tx.textContent = text;
+  }
+
+  function showAlert(id, type, msg) {
+    const el = document.getElementById(id);
+    el.className = `form-alert ${type}`;
+    el.innerHTML = `<span>${type === 'error' ? '✕' : '✓'}</span><span>${msg}</span>`;
+  }
+
+  async function doLogin() {
+    const email    = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+
+    if (!email || !password) {
+      showAlert('login-alert', 'error', 'Please enter your email and password.');
+      return;
+    }
+
+    setLoading('login-btn', 'login-spinner', 'login-btn-text', true, 'Signing in…');
+    document.getElementById('login-alert').className = 'form-alert';
+
+    const res = await fetch('/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+
+    setLoading('login-btn', 'login-spinner', 'login-btn-text', false, 'Sign In');
+
+    if (data.success) {
+      window.location.href = data.redirect;
+    } else {
+      showAlert('login-alert', 'error', data.message || 'Invalid credentials.');
+    }
+  }
+
+  async function doRegister() {
+    const body = {
+      full_name: document.getElementById('reg-fullname').value.trim(),
+      project_name: document.getElementById('reg-project').value.trim(),
+      email: document.getElementById('reg-email').value.trim(),
+      wwid: document.getElementById('reg-wwid').value.trim(),
+      password: document.getElementById('reg-password').value,
+      confirm_password: document.getElementById('reg-confirm').value,
+    };
+
+    document.querySelectorAll('.err-msg').forEach(e => e.classList.remove('show'));
+    document.querySelectorAll('input.err').forEach(e => e.classList.remove('err'));
+    document.getElementById('reg-alert').className = 'form-alert';
+
+    setLoading('reg-btn', 'reg-spinner', 'reg-btn-text', true, 'Creating account…');
+
+    const res = await fetch('/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+
+    setLoading('reg-btn', 'reg-spinner', 'reg-btn-text', false, 'Create Account');
+
+    if (data.success) {
+      window.location.href = data.redirect;
+    } else if (data.errors) {
+      showErrors(data.errors);
+    } else {
+      showAlert('reg-alert', 'error', data.message || 'Registration failed.');
+    }
+  }
+
+  // Enter key support
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      if (document.getElementById('panel-login').classList.contains('active')) doLogin();
+      else doRegister();
+    }
+  });
+</script>
+</body>
+</html>

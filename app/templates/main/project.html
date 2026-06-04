@@ -1,0 +1,551 @@
+{% extends "base.html" %}
+{% block title %}{{ project.name }}{% endblock %}
+
+{% block extra_head %}
+<style>
+  .project-layout { display: grid; grid-template-columns: 1fr 380px; gap: 24px; align-items: start; }
+
+  /* DWL list */
+  .dwl-item {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); margin-bottom: 12px;
+    overflow: hidden; transition: box-shadow var(--transition);
+  }
+  .dwl-item:hover { box-shadow: var(--shadow-sm); }
+  .dwl-header {
+    padding: 14px 18px; display: flex; align-items: center;
+    justify-content: space-between; cursor: pointer;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+  }
+  .dwl-header:hover { background: var(--surface-3); }
+  .dwl-seq {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--accent); color: white;
+    font-size: 12px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .dwl-name { font-weight: 600; font-size: 14px; margin-left: 10px; flex: 1; }
+  .dwl-chips { display: flex; gap: 6px; }
+  .dwl-chip {
+    font-size: 11px; font-weight: 600; padding: 2px 8px;
+    border-radius: 6px; background: var(--surface-3); color: var(--text-secondary);
+  }
+  .dwl-chip.has { background: #dcfce7; color: #166534; }
+  .dwl-body { padding: 16px 18px; display: none; }
+  .dwl-body.open { display: block; }
+  .dwl-snippet {
+    font-family: var(--font-mono); font-size: 12px;
+    background: #1a1a2e; color: #a8d8ea;
+    border-radius: 8px; padding: 12px 14px;
+    max-height: 160px; overflow-y: auto; white-space: pre-wrap;
+    word-break: break-all; line-height: 1.6;
+  }
+  .dwl-body-meta {
+    display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;
+    font-size: 12px; color: var(--text-secondary);
+  }
+
+  /* Add DWL modal */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.45); backdrop-filter: blur(4px);
+    display: none; align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface); border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+    width: 100%; max-width: 800px; max-height: 90vh;
+    overflow-y: auto;
+    animation: modal-in 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes modal-in {
+    from { opacity: 0; transform: scale(0.95) translateY(16px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .modal-header {
+    padding: 22px 26px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; background: var(--surface); z-index: 1;
+  }
+  .modal-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+  .modal-close { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border-dark); background: var(--surface-2); cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: background var(--transition); }
+  .modal-close:hover { background: var(--surface-3); }
+  .modal-body { padding: 24px 26px; }
+  .modal-footer { padding: 18px 26px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
+
+  .file-upload-area {
+    border: 1.5px dashed var(--border-dark); border-radius: var(--radius);
+    padding: 20px; text-align: center; cursor: pointer;
+    transition: all var(--transition); background: var(--surface-2);
+  }
+  .file-upload-area:hover, .file-upload-area.drag { border-color: var(--accent); background: var(--accent-light); }
+  .file-upload-area .icon { font-size: 28px; margin-bottom: 8px; }
+  .file-upload-area .label { font-size: 14px; color: var(--text-secondary); }
+  .file-upload-area .label span { color: var(--accent); font-weight: 500; }
+  .file-upload-area .fname { font-size: 13px; font-weight: 500; color: var(--success); margin-top: 6px; }
+
+  /* Right sidebar */
+  .sidebar .card { position: sticky; top: calc(var(--nav-height) + 16px); }
+  .generate-btn {
+    width: 100%; padding: 16px; border-radius: var(--radius);
+    background: linear-gradient(135deg, var(--accent) 0%, #0055b3 100%);
+    color: white; border: none; cursor: pointer;
+    font-size: 16px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    transition: all var(--transition); letter-spacing: -0.2px;
+    font-family: var(--font-display);
+  }
+  .generate-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(0,113,227,0.4); }
+  .generate-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .result-item {
+    padding: 14px; border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--surface-2); margin-top: 12px;
+    transition: border-color var(--transition);
+  }
+  .result-item:hover { border-color: rgba(0,113,227,0.25); }
+  .result-item .result-meta { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; }
+  .result-item .result-stats { font-size: 13px; font-weight: 500; margin-bottom: 10px; }
+  .result-item .result-summary { font-size: 12px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 10px; }
+
+  /* Progress overlay */
+  .generating-overlay {
+    position: fixed; inset: 0; z-index: 300;
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(6px);
+    display: none; align-items: center; justify-content: center;
+  }
+  .generating-overlay.open { display: flex; }
+  .gen-box {
+    background: var(--surface); border-radius: var(--radius-xl);
+    padding: 48px 56px; text-align: center; max-width: 420px;
+    box-shadow: var(--shadow-xl);
+  }
+  .gen-spinner {
+    width: 56px; height: 56px; margin: 0 auto 24px;
+    border: 4px solid var(--surface-3);
+    border-top-color: var(--accent);
+    border-radius: 50%; animation: spin 0.8s linear infinite;
+  }
+  .gen-box h3 { font-family: var(--font-display); font-size: 22px; font-weight: 700; letter-spacing: -0.4px; }
+  .gen-box p { font-size: 14px; color: var(--text-secondary); margin-top: 10px; }
+  .gen-steps { margin-top: 24px; text-align: left; }
+  .gen-step {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; color: var(--text-secondary); padding: 6px 0;
+  }
+  .gen-step .step-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--surface-3); flex-shrink: 0; transition: background 0.4s;
+  }
+  .gen-step.active .step-dot { background: var(--accent); animation: pulse 1s ease infinite; }
+  .gen-step.done .step-dot { background: var(--success); }
+  .gen-step.active { color: var(--text-primary); font-weight: 500; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  @media (max-width: 1000px) {
+    .project-layout { grid-template-columns: 1fr; }
+    .sidebar .card { position: static; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <!-- Breadcrumb + header -->
+  <div class="page-header">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <a href="{{ url_for('main.home') }}" style="color:var(--text-secondary);text-decoration:none;font-size:14px;">← Dashboard</a>
+    </div>
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+      <div>
+        <h1 style="display:flex;align-items:center;gap:12px;">
+          {{ project.name }}
+          <span class="badge badge-{% if project.status == 'completed' %}green{% elif project.status == 'error' %}red{% elif project.status == 'processing' %}orange{% else %}gray{% endif %}">
+            {{ project.status }}
+          </span>
+        </h1>
+        {% if project.description %}
+        <p>{{ project.description }}</p>
+        {% endif %}
+      </div>
+      <button class="btn btn-primary" onclick="openModal()">
+        + Add DWL Script
+      </button>
+    </div>
+  </div>
+
+  <div class="project-layout">
+    <!-- Left: DWL list -->
+    <div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <h2 style="font-family:var(--font-display);font-size:18px;font-weight:600;letter-spacing:-0.3px;">
+          DataWeave Scripts
+        </h2>
+        <span style="font-size:13px;color:var(--text-secondary);" id="dwl-count">
+          {{ dwls | length }} DWL{{ 's' if dwls | length != 1 }}
+        </span>
+      </div>
+
+      <div id="dwl-list">
+        {% if dwls %}
+          {% for dwl in dwls %}
+          <div class="dwl-item" id="dwl-{{ dwl.id }}">
+            <div class="dwl-header" onclick="toggleDwl({{ dwl.id }})">
+              <div class="dwl-seq">{{ dwl.sequence_number }}</div>
+              <div class="dwl-name">{{ dwl.dwl_name }}</div>
+              <div class="dwl-chips">
+                <span class="dwl-chip {% if dwl.source_schema_content %}has{% endif %}">SRC XSD</span>
+                <span class="dwl-chip {% if dwl.target_schema_content %}has{% endif %}">TGT XSD</span>
+                <span class="dwl-chip {% if dwl.sample_input %}has{% endif %}">Input</span>
+                <span class="dwl-chip {% if dwl.sample_output %}has{% endif %}">Output</span>
+              </div>
+              <button class="btn btn-danger btn-sm" style="margin-left:10px;" onclick="deleteDwl({{ dwl.id }}, event)">✕</button>
+            </div>
+            <div class="dwl-body" id="dwl-body-{{ dwl.id }}">
+              <div class="dwl-snippet">{{ dwl.dwl_content[:600] }}{% if dwl.dwl_content | length > 600 %}
+... ({{ dwl.dwl_content | length }} chars total){% endif %}</div>
+              <div class="dwl-body-meta">
+                {% if dwl.source_schema_filename %}<span>📄 Source: {{ dwl.source_schema_filename }}</span>{% endif %}
+                {% if dwl.target_schema_filename %}<span>📄 Target: {{ dwl.target_schema_filename }}</span>{% endif %}
+                {% if dwl.sample_input %}<span>✓ Sample input provided</span>{% endif %}
+                {% if dwl.sample_output %}<span>✓ Sample output provided</span>{% endif %}
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="empty-state" id="dwl-empty">
+            <div class="icon">📝</div>
+            <h3>No DWL scripts yet</h3>
+            <p>Add your MuleSoft DataWeave scripts. You can add multiple DWL steps that will be combined into one CPI mapping.</p>
+            <button class="btn btn-primary" onclick="openModal()">+ Add First DWL</button>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Right: Sidebar -->
+    <div class="sidebar">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Generate Mapping</span>
+          <span class="badge badge-blue">AI Powered</span>
+        </div>
+        <div class="card-body">
+          <p style="font-size:13px;color:var(--text-secondary);margin-bottom:20px;line-height:1.6;">
+            Once you've added all DWL scripts, click generate. The AI will analyse all transformation logic and produce a complete CPI Mapping Sheet (.xlsx).
+          </p>
+
+          <div style="background:var(--surface-2);border-radius:var(--radius);padding:14px;margin-bottom:20px;">
+            <div style="font-size:12px;color:var(--text-secondary);font-weight:600;text-transform:uppercase;letter-spacing:0.3px;margin-bottom:10px;">What's included</div>
+            {% set items = ['All field-level mappings','Transformation logic descriptions','Config/property parameters','CPI implementation notes','Colour-coded mapping types'] %}
+            {% for item in items %}
+            <div style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:6px;">
+              <span style="color:var(--success)">✓</span> {{ item }}
+            </div>
+            {% endfor %}
+          </div>
+
+          <button class="generate-btn" id="gen-btn" onclick="generateMapping()" {% if not dwls %}disabled{% endif %}>
+            <span id="gen-btn-icon">⚡</span>
+            <span id="gen-btn-text">Generate CPI Mapping</span>
+          </button>
+          {% if not dwls %}
+          <p style="font-size:12px;color:var(--text-tertiary);text-align:center;margin-top:10px;">Add at least one DWL script first</p>
+          {% endif %}
+
+          <!-- Previous Results -->
+          {% if results %}
+          <div style="margin-top:24px;">
+            <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.3px;color:var(--text-secondary);margin-bottom:10px;">Previous Results</div>
+            {% for result in results[:3] %}
+            <div class="result-item">
+              <div class="result-meta">
+                {{ result.created_at.strftime('%b %d, %Y %H:%M') }} ·
+                <span class="badge badge-{% if result.status == 'success' %}green{% else %}red{% endif %}">{{ result.status }}</span>
+              </div>
+              {% if result.status == 'success' %}
+                {% set mdata = result.get_mapping_data() %}
+                <div class="result-stats">{{ mdata.get('mapping_rows', []) | length }} fields mapped</div>
+                {% if mdata.get('summary') %}
+                <div class="result-summary">{{ mdata.get('summary', '')[:120] }}{% if mdata.get('summary', '') | length > 120 %}…{% endif %}</div>
+                {% endif %}
+                <a href="/api/result/{{ result.id }}/download" class="btn btn-secondary btn-sm" style="width:100%;justify-content:center;">
+                  ↓ Download .xlsx
+                </a>
+              {% else %}
+                <div class="result-summary" style="color:var(--danger);">{{ result.error_message[:100] if result.error_message else 'Generation failed.' }}</div>
+              {% endif %}
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add DWL Modal -->
+<div class="modal-overlay" id="dwl-modal" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Add DataWeave Script</div>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="modal-alert" style="display:none;" class="alert"></div>
+
+      <div class="form-group">
+        <label>Step Name <span style="font-weight:400;color:var(--text-tertiary);text-transform:none;">(optional)</span></label>
+        <input type="text" id="dwl-name" placeholder="e.g. SAPI-Transform, EAPI-Mapping" />
+      </div>
+
+      <div class="form-group">
+        <label>DataWeave Script <span style="color:var(--danger);">*</span></label>
+        <textarea class="mono" id="dwl-content" rows="10" placeholder="%dw 2.0&#10;output application/xml&#10;---&#10;{&#10;  ...&#10;}"></textarea>
+        <span class="field-error" id="err-dwl-content"></span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px;">
+        <div class="form-group" style="margin-bottom:0;">
+          <label>Source Schema (.XSD/.WSDL) <span style="color:var(--danger);">*</span></label>
+          <div class="file-upload-area" id="src-drop" onclick="document.getElementById('src-file').click()"
+               ondragover="dragOver(event,'src-drop')" ondragleave="dragLeave('src-drop')" ondrop="dropFile(event,'src-file','src-drop','src-fname')">
+            <div class="icon">📄</div>
+            <div class="label"><span>Click to upload</span> or drag & drop</div>
+            <div class="label" style="font-size:11px;margin-top:3px;">.xsd, .wsdl, .xml</div>
+            <div class="fname" id="src-fname"></div>
+          </div>
+          <input type="file" id="src-file" accept=".xsd,.wsdl,.xml" style="display:none" onchange="showFileName(this,'src-fname','src-drop')">
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label>Target Schema (.XSD/.WSDL) <span style="color:var(--danger);">*</span></label>
+          <div class="file-upload-area" id="tgt-drop" onclick="document.getElementById('tgt-file').click()"
+               ondragover="dragOver(event,'tgt-drop')" ondragleave="dragLeave('tgt-drop')" ondrop="dropFile(event,'tgt-file','tgt-drop','tgt-fname')">
+            <div class="icon">📄</div>
+            <div class="label"><span>Click to upload</span> or drag & drop</div>
+            <div class="label" style="font-size:11px;margin-top:3px;">.xsd, .wsdl, .xml</div>
+            <div class="fname" id="tgt-fname"></div>
+          </div>
+          <input type="file" id="tgt-file" accept=".xsd,.wsdl,.xml" style="display:none" onchange="showFileName(this,'tgt-fname','tgt-drop')">
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+        <div class="form-group" style="margin-bottom:0;">
+          <label>Sample Input Payload <span style="font-weight:400;color:var(--text-tertiary);text-transform:none;">(optional)</span></label>
+          <textarea class="mono" id="dwl-sample-in" rows="6" style="min-height:120px;" placeholder='{"order": {...}}'></textarea>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label>Sample Output Payload <span style="font-weight:400;color:var(--text-tertiary);text-transform:none;">(optional)</span></label>
+          <textarea class="mono" id="dwl-sample-out" rows="6" style="min-height:120px;" placeholder='<ORDERS05>...</ORDERS05>'></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" id="add-dwl-btn" onclick="addDwl()">
+        <div class="spinner" id="add-spinner" style="display:none;"></div>
+        <span id="add-btn-text">Add DWL Script</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Generating overlay -->
+<div class="generating-overlay" id="gen-overlay">
+  <div class="gen-box">
+    <div class="gen-spinner"></div>
+    <h3>Generating Mapping…</h3>
+    <p>The AI is analysing your DataWeave scripts and building the CPI Mapping Sheet.</p>
+    <div class="gen-steps">
+      <div class="gen-step active" id="step-1"><div class="step-dot"></div> Analysing DWL transformation logic</div>
+      <div class="gen-step" id="step-2"><div class="step-dot"></div> Identifying field mappings & types</div>
+      <div class="gen-step" id="step-3"><div class="step-dot"></div> Building CPI mapping structure</div>
+      <div class="gen-step" id="step-4"><div class="step-dot"></div> Generating Excel mapping sheet</div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const PROJECT_ID = {{ project.id }};
+  let dwlCount = {{ dwls | length }};
+
+  // ── Modal ──────────────────────────────────────────────────────────────
+  function openModal() {
+    document.getElementById('dwl-modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    document.getElementById('dwl-modal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function closeModalOutside(e) {
+    if (e.target === document.getElementById('dwl-modal')) closeModal();
+  }
+
+  function toggleDwl(id) {
+    const body = document.getElementById(`dwl-body-${id}`);
+    body.classList.toggle('open');
+  }
+
+  // ── File upload ────────────────────────────────────────────────────────
+  function showFileName(input, fnameId, dropId) {
+    const fname = document.getElementById(fnameId);
+    if (input.files[0]) {
+      fname.textContent = '✓ ' + input.files[0].name;
+      document.getElementById(dropId).style.borderColor = 'var(--success)';
+    }
+  }
+  function dragOver(e, dropId) { e.preventDefault(); document.getElementById(dropId).classList.add('drag'); }
+  function dragLeave(dropId) { document.getElementById(dropId).classList.remove('drag'); }
+  function dropFile(e, fileInputId, dropId, fnameId) {
+    e.preventDefault();
+    dragLeave(dropId);
+    const dt = e.dataTransfer;
+    if (dt.files.length) {
+      const inp = document.getElementById(fileInputId);
+      inp.files = dt.files;
+      showFileName(inp, fnameId, dropId);
+    }
+  }
+
+  // ── Add DWL ────────────────────────────────────────────────────────────
+  async function addDwl() {
+    const dwlContent = document.getElementById('dwl-content').value.trim();
+    if (!dwlContent) {
+      document.getElementById('err-dwl-content').textContent = 'DWL script content is required.';
+      document.getElementById('err-dwl-content').classList.add('visible');
+      document.getElementById('dwl-content').classList.add('error');
+      return;
+    }
+    document.getElementById('err-dwl-content').classList.remove('visible');
+    document.getElementById('dwl-content').classList.remove('error');
+
+    const btn = document.getElementById('add-dwl-btn');
+    btn.disabled = true;
+    document.getElementById('add-spinner').style.display = 'block';
+    document.getElementById('add-btn-text').textContent = 'Saving…';
+
+    const formData = new FormData();
+    formData.append('dwl_name', document.getElementById('dwl-name').value.trim());
+    formData.append('dwl_content', dwlContent);
+    formData.append('sample_input', document.getElementById('dwl-sample-in').value.trim());
+    formData.append('sample_output', document.getElementById('dwl-sample-out').value.trim());
+
+    const srcFile = document.getElementById('src-file').files[0];
+    const tgtFile = document.getElementById('tgt-file').files[0];
+    if (srcFile) formData.append('source_schema', srcFile);
+    if (tgtFile) formData.append('target_schema', tgtFile);
+
+    try {
+      const res = await fetch(`/api/project/${PROJECT_ID}/dwl`, {
+        method: 'POST', body: formData
+      });
+      const data = await res.json();
+
+      btn.disabled = false;
+      document.getElementById('add-spinner').style.display = 'none';
+      document.getElementById('add-btn-text').textContent = 'Add DWL Script';
+
+      if (data.success) {
+        showToast('DWL script added!', 'success');
+        closeModal();
+        location.reload();
+      } else {
+        const alertEl = document.getElementById('modal-alert');
+        alertEl.className = 'alert alert-error';
+        alertEl.style.display = 'flex';
+        alertEl.innerHTML = `<span>✕</span><span>${data.message || 'Failed to add DWL.'}</span>`;
+      }
+    } catch (err) {
+      btn.disabled = false;
+      document.getElementById('add-spinner').style.display = 'none';
+      document.getElementById('add-btn-text').textContent = 'Add DWL Script';
+      showToast('Network error. Please try again.', 'error');
+    }
+  }
+
+  // ── Delete DWL ─────────────────────────────────────────────────────────
+  async function deleteDwl(dwlId, event) {
+    event.stopPropagation();
+    if (!confirm('Remove this DWL script?')) return;
+    const res = await apiFetch(`/api/project/${PROJECT_ID}/dwl/${dwlId}`, { method: 'DELETE' });
+    if (res.data.success) {
+      showToast('DWL removed.', 'success');
+      document.getElementById(`dwl-${dwlId}`)?.remove();
+      dwlCount = Math.max(0, dwlCount - 1);
+      document.getElementById('dwl-count').textContent = `${dwlCount} DWL${dwlCount !== 1 ? 's' : ''}`;
+      if (dwlCount === 0) {
+        document.getElementById('gen-btn').disabled = true;
+        document.getElementById('dwl-list').innerHTML = `
+          <div class="empty-state" id="dwl-empty">
+            <div class="icon">📝</div>
+            <h3>No DWL scripts yet</h3>
+            <p>Add your MuleSoft DataWeave scripts.</p>
+            <button class="btn btn-primary" onclick="openModal()">+ Add First DWL</button>
+          </div>`;
+      }
+    } else {
+      showToast(res.data.message || 'Failed to delete DWL.', 'error');
+    }
+  }
+
+  // ── Generate Mapping ───────────────────────────────────────────────────
+  let stepInterval;
+  function startGenSteps() {
+    let step = 1;
+    const steps = ['step-1','step-2','step-3','step-4'];
+    const delays = [0, 8000, 18000, 30000];
+    delays.forEach((d, i) => {
+      setTimeout(() => {
+        steps.forEach((s, j) => {
+          const el = document.getElementById(s);
+          if (j < i) { el.className = 'gen-step done'; }
+          else if (j === i) { el.className = 'gen-step active'; }
+          else { el.className = 'gen-step'; }
+        });
+      }, d);
+    });
+  }
+
+  async function generateMapping() {
+    if (dwlCount === 0) { showToast('Add DWL scripts first.', 'warning'); return; }
+
+    document.getElementById('gen-overlay').classList.add('open');
+    document.getElementById('gen-btn').disabled = true;
+    startGenSteps();
+
+    try {
+      const res = await apiFetch(`/api/project/${PROJECT_ID}/generate`, { method: 'POST' });
+      document.getElementById('gen-overlay').classList.remove('open');
+      document.getElementById('gen-btn').disabled = false;
+
+      if (res.data.success) {
+        showToast(`✓ Generated! ${res.data.mapping_rows_count} fields mapped.`, 'success', 6000);
+        // Auto-download
+        const a = document.createElement('a');
+        a.href = res.data.download_url;
+        a.download = res.data.xlsx_filename;
+        a.click();
+        setTimeout(() => location.reload(), 1500);
+      } else {
+        showToast(res.data.message || 'Generation failed.', 'error', 8000);
+        location.reload();
+      }
+    } catch (err) {
+      document.getElementById('gen-overlay').classList.remove('open');
+      document.getElementById('gen-btn').disabled = false;
+      showToast('Network error during generation.', 'error');
+    }
+  }
+</script>
+{% endblock %}

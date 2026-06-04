@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block title %}New Project{% endblock %}
+
+{% block extra_head %}
+<style>
+  .form-card {
+    max-width: 600px; margin: 0 auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .form-card-header {
+    padding: 28px 32px 24px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, #f8f9ff 0%, #f5f5f7 100%);
+  }
+  .form-card-header h2 {
+    font-family: var(--font-display);
+    font-size: 22px; font-weight: 700;
+    letter-spacing: -0.4px;
+  }
+  .form-card-header p { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
+  .form-card-body { padding: 28px 32px; }
+
+  .word-count {
+    font-size: 12px; color: var(--text-tertiary);
+    text-align: right; margin-top: 4px;
+  }
+  .word-count.warn { color: var(--warning); }
+  .word-count.over { color: var(--danger); }
+
+  .form-actions {
+    display: flex; gap: 12px; justify-content: flex-end;
+    margin-top: 28px; padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+      <a href="{{ url_for('main.home') }}" style="color:var(--text-secondary);text-decoration:none;font-size:14px;">← Dashboard</a>
+    </div>
+    <h1>New Project</h1>
+    <p>Set up a new DWL migration project</p>
+  </div>
+
+  <div class="form-card">
+    <div class="form-card-header">
+      <h2>Project Details</h2>
+      <p>Each project contains one or more DWL scripts to be analysed together.</p>
+    </div>
+    <div class="form-card-body">
+      <div id="form-alert" class="alert" style="display:none;"></div>
+
+      <div class="form-group">
+        <label>Project Name <span style="color:var(--danger)">*</span></label>
+        <input type="text" id="proj-name" placeholder="e.g. ORDERS-MuleSoft-To-CPI-Migration"
+               oninput="clearErr('proj-name')" />
+        <span class="field-error" id="err-name"></span>
+      </div>
+
+      <div class="form-group">
+        <label>Description <span style="color:var(--text-tertiary);font-weight:400;text-transform:none;font-size:12px;">(optional, max 100 words)</span></label>
+        <textarea id="proj-desc" rows="4"
+          placeholder="Briefly describe this migration project — which interfaces, source/target systems, or business context..."
+          oninput="countWords(this)"></textarea>
+        <div class="word-count" id="word-count">0 / 100 words</div>
+      </div>
+
+      <div class="form-actions">
+        <a href="{{ url_for('main.home') }}" class="btn btn-secondary">Cancel</a>
+        <button class="btn btn-primary" id="create-btn" onclick="createProject()">
+          <div class="spinner dark" id="create-spinner" style="display:none;border-top-color:white;"></div>
+          <span id="create-btn-text">Create Project →</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function clearErr(id) {
+    document.getElementById('err-name').classList.remove('visible');
+    document.getElementById(id).classList.remove('error');
+  }
+
+  function countWords(el) {
+    const words = el.value.trim().split(/\s+/).filter(Boolean);
+    const count = words.length;
+    const wc = document.getElementById('word-count');
+    wc.textContent = `${count} / 100 words`;
+    wc.className = count > 100 ? 'word-count over' : count > 85 ? 'word-count warn' : 'word-count';
+  }
+
+  async function createProject() {
+    const name = document.getElementById('proj-name').value.trim();
+    const desc = document.getElementById('proj-desc').value.trim();
+
+    document.getElementById('form-alert').style.display = 'none';
+
+    if (!name) {
+      document.getElementById('err-name').textContent = 'Project name is required.';
+      document.getElementById('err-name').classList.add('visible');
+      document.getElementById('proj-name').classList.add('error');
+      document.getElementById('proj-name').focus();
+      return;
+    }
+
+    const btn = document.getElementById('create-btn');
+    btn.disabled = true;
+    document.getElementById('create-spinner').style.display = 'block';
+    document.getElementById('create-btn-text').textContent = 'Creating…';
+
+    const res = await apiFetch('/project/new', {
+      method: 'POST',
+      body: JSON.stringify({ name, description: desc })
+    });
+
+    btn.disabled = false;
+    document.getElementById('create-spinner').style.display = 'none';
+    document.getElementById('create-btn-text').textContent = 'Create Project →';
+
+    if (res.data.success) {
+      showToast('Project created!', 'success');
+      window.location.href = res.data.redirect;
+    } else {
+      const alertEl = document.getElementById('form-alert');
+      alertEl.className = 'alert alert-error';
+      alertEl.style.display = 'flex';
+      alertEl.innerHTML = `<span>✕</span><span>${res.data.message || 'Failed to create project.'}</span>`;
+    }
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey && document.activeElement.id !== 'proj-desc') createProject();
+  });
+</script>
+{% endblock %}

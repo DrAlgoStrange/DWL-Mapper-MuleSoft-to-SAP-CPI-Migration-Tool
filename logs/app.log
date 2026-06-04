@@ -1,0 +1,17 @@
+[2026-06-04 10:19:31] INFO in __init__ (_setup_logging:76): Logging configured.
+[2026-06-04 10:19:31] INFO in __init__ (create_app:41): Database tables created / verified.
+[2026-06-04 10:19:31] INFO in __init__ (create_app:43): DWL Mapper started | env=development
+[2026-06-04 10:19:31] INFO in _internal (_log:97): [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.29.196:5000
+[2026-06-04 10:19:31] INFO in _internal (_log:97): [33mPress CTRL+C to quit[0m
+[2026-06-04 10:19:31] INFO in _internal (_log:97):  * Restarting with stat
+[2026-06-04 10:19:32] INFO in __init__ (_setup_logging:76): Logging configured.
+[2026-06-04 10:19:32] INFO in __init__ (create_app:41): Database tables created / verified.
+[2026-06-04 10:19:32] INFO in __init__ (create_app:43): DWL Mapper started | env=development
+[2026-06-04 10:19:32] WARNING in _internal (_log:97):  * Debugger is active!
+[2026-06-04 10:19:32] INFO in _internal (_log:97):  * Debugger PIN: 118-627-149
+[2026-06-04 10:19:52] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 10:19:52] "[32mGET / HTTP/1.1[0m" 302 -
+[2026-06-04 10:19:52] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 10:19:52] "GET /auth/login HTTP/1.1" 200 -
+[2026-06-04 10:19:52] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 10:19:52] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -

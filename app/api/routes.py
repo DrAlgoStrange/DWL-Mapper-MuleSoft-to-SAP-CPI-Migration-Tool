@@ -19,13 +19,6 @@ from ..services.excel_service import generate_mapping_xlsx
 
 logger = logging.getLogger(__name__)
 
-ALLOWED_SCHEMA_EXTENSIONS = {'.xsd', '.wsdl', '.xml'}
-
-
-def _allowed_schema_file(filename: str) -> bool:
-    ext = os.path.splitext(filename.lower())[1]
-    return ext in ALLOWED_SCHEMA_EXTENSIONS
-
 
 # ── DWL Entries ────────────────────────────────────────────────────────────
 
@@ -36,42 +29,15 @@ def add_dwl(project_id):
     try:
         project = Project.query.filter_by(id=project_id, user_id=current_user.id).first_or_404()
 
-        dwl_name    = request.form.get('dwl_name', '').strip()
-        dwl_content = request.form.get('dwl_content', '').strip()
+        dwl_name      = request.form.get('dwl_name', '').strip()
+        dwl_content   = request.form.get('dwl_content', '').strip()
         sample_input  = request.form.get('sample_input', '').strip()
         sample_output = request.form.get('sample_output', '').strip()
 
         if not dwl_content:
             return jsonify({'success': False, 'message': 'DWL content is required.'}), 400
 
-        # Sequence number
         max_seq = db.session.query(db.func.max(DWLEntry.sequence_number)).filter_by(project_id=project_id).scalar() or 0
-
-        # Handle schema file uploads
-        source_schema_content  = None
-        source_schema_filename = None
-        target_schema_content  = None
-        target_schema_filename = None
-
-        if 'source_schema' in request.files:
-            f = request.files['source_schema']
-            if f and f.filename and _allowed_schema_file(f.filename):
-                try:
-                    source_schema_content  = f.read().decode('utf-8', errors='replace')
-                    source_schema_filename = f.filename
-                    logger.info(f"Source schema uploaded: {f.filename}")
-                except Exception as e:
-                    logger.warning(f"Could not read source schema: {e}")
-
-        if 'target_schema' in request.files:
-            f = request.files['target_schema']
-            if f and f.filename and _allowed_schema_file(f.filename):
-                try:
-                    target_schema_content  = f.read().decode('utf-8', errors='replace')
-                    target_schema_filename = f.filename
-                    logger.info(f"Target schema uploaded: {f.filename}")
-                except Exception as e:
-                    logger.warning(f"Could not read target schema: {e}")
 
         dwl_entry = DWLEntry(
             project_id=project_id,
@@ -80,10 +46,6 @@ def add_dwl(project_id):
             dwl_content=dwl_content,
             sample_input=sample_input or None,
             sample_output=sample_output or None,
-            source_schema_filename=source_schema_filename,
-            source_schema_content=source_schema_content,
-            target_schema_filename=target_schema_filename,
-            target_schema_content=target_schema_content,
         )
         db.session.add(dwl_entry)
         project.updated_at = datetime.utcnow()
@@ -95,8 +57,6 @@ def add_dwl(project_id):
             'dwl_id': dwl_entry.id,
             'sequence_number': dwl_entry.sequence_number,
             'dwl_name': dwl_entry.dwl_name,
-            'has_source_schema': bool(source_schema_content),
-            'has_target_schema': bool(target_schema_content),
         })
 
     except Exception as e:
@@ -187,17 +147,21 @@ def generate_mapping(project_id):
         if not dwls:
             return jsonify({'success': False, 'message': 'No DWL entries found. Please add at least one DWL before generating.'}), 400
 
-        # Build prompt entries
+        # Build prompt entries — schemas come from project level, not per-DWL
         dwl_entries = [{
             'dwl_name': d.dwl_name,
             'dwl_content': d.dwl_content,
             'sample_input': d.sample_input,
             'sample_output': d.sample_output,
-            'source_schema': d.source_schema_content,
-            'target_schema': d.target_schema_content,
         } for d in dwls]
 
-        prompt = build_dwl_analysis_prompt(dwl_entries)
+        prompt = build_dwl_analysis_prompt(
+            dwl_entries,
+            source_schema=project.source_schema_content,
+            source_schema_filename=project.source_schema_filename,
+            target_schema=project.target_schema_content,
+            target_schema_filename=project.target_schema_filename,
+        )
         logger.info(f"Generating mapping for project {project_id} with {len(dwls)} DWL(s)")
 
         # Create pending result record

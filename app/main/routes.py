@@ -1,3 +1,4 @@
+import os
 import logging
 from flask import render_template, redirect, url_for, jsonify, request
 from flask_login import login_required, current_user
@@ -26,30 +27,67 @@ def home():
         return render_template('main/home.html', projects=[], user=current_user)
 
 
+ALLOWED_SCHEMA_EXTENSIONS = {'.xsd', '.wsdl', '.xml'}
+
+def _allowed_schema_file(filename: str) -> bool:
+    return os.path.splitext(filename.lower())[1] in ALLOWED_SCHEMA_EXTENSIONS
+
+
 @main.route('/project/new', methods=['GET', 'POST'])
 @login_required
 def new_project():
     if request.method == 'POST':
         try:
-            data = request.get_json(silent=True) or {}
-            name        = (data.get('name') or '').strip()
-            description = (data.get('description') or '').strip()
+            name        = (request.form.get('name') or '').strip()
+            description = (request.form.get('description') or '').strip()
 
             if not name:
                 return jsonify({'success': False, 'message': 'Project name is required.'}), 400
 
-            # Check uniqueness per user
             existing = Project.query.filter_by(user_id=current_user.id, name=name).first()
             if existing:
                 return jsonify({'success': False, 'message': f'A project named "{name}" already exists in your account.'}), 409
 
-            # Limit description to ~100 words
             if description:
                 words = description.split()
                 if len(words) > 100:
                     description = ' '.join(words[:100])
 
-            project = Project(name=name, description=description, user_id=current_user.id)
+            # Read source and target schemas uploaded at project level
+            source_schema_content  = None
+            source_schema_filename = None
+            target_schema_content  = None
+            target_schema_filename = None
+
+            if 'source_schema' in request.files:
+                f = request.files['source_schema']
+                if f and f.filename and _allowed_schema_file(f.filename):
+                    try:
+                        source_schema_content  = f.read().decode('utf-8', errors='replace')
+                        source_schema_filename = f.filename
+                        logger.info(f"Project source schema uploaded: {f.filename}")
+                    except Exception as e:
+                        logger.warning(f"Could not read source schema: {e}")
+
+            if 'target_schema' in request.files:
+                f = request.files['target_schema']
+                if f and f.filename and _allowed_schema_file(f.filename):
+                    try:
+                        target_schema_content  = f.read().decode('utf-8', errors='replace')
+                        target_schema_filename = f.filename
+                        logger.info(f"Project target schema uploaded: {f.filename}")
+                    except Exception as e:
+                        logger.warning(f"Could not read target schema: {e}")
+
+            project = Project(
+                name=name,
+                description=description,
+                user_id=current_user.id,
+                source_schema_filename=source_schema_filename,
+                source_schema_content=source_schema_content,
+                target_schema_filename=target_schema_filename,
+                target_schema_content=target_schema_content,
+            )
             db.session.add(project)
             db.session.commit()
             logger.info(f"New project created: '{name}' by user {current_user.id}")

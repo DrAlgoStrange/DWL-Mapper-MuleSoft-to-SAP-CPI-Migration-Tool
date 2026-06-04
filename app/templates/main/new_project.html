@@ -24,14 +24,23 @@
   .form-card-header p { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
   .form-card-body { padding: 28px 32px; }
 
-  .word-count {
+  .form-actions {
     font-size: 12px; color: var(--text-tertiary);
     text-align: right; margin-top: 4px;
   }
   .word-count.warn { color: var(--warning); }
   .word-count.over { color: var(--danger); }
 
-  .form-actions {
+  .file-upload-area {
+    border: 1.5px dashed var(--border-dark); border-radius: var(--radius);
+    padding: 20px; text-align: center; cursor: pointer;
+    transition: all var(--transition); background: var(--surface-2);
+  }
+  .file-upload-area:hover, .file-upload-area.drag { border-color: var(--accent); background: var(--accent-light); }
+  .file-upload-area .icon { font-size: 28px; margin-bottom: 8px; }
+  .file-upload-area .label { font-size: 14px; color: var(--text-secondary); }
+  .file-upload-area .label span { color: var(--accent); font-weight: 500; }
+  .file-upload-area .fname { font-size: 13px; font-weight: 500; color: var(--success); margin-top: 6px; }
     display: flex; gap: 12px; justify-content: flex-end;
     margin-top: 28px; padding-top: 24px;
     border-top: 1px solid var(--border);
@@ -72,6 +81,35 @@
         <div class="word-count" id="word-count">0 / 100 words</div>
       </div>
 
+      <div style="background:var(--accent-light);border-radius:var(--radius);padding:14px 16px;margin-bottom:20px;font-size:13px;color:#1e3a8a;border:1px solid #bfdbfe;">
+        <strong>📋 Upload schemas once here</strong> — the Source XSD is the CPI mapping input structure and the Target XSD is the CPI mapping output structure. These apply to all DWL steps in this project.
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+        <div class="form-group" style="margin-bottom:0;">
+          <label>Source XSD / WSDL <span style="color:var(--text-tertiary);font-weight:400;text-transform:none;">(CPI Input)</span></label>
+          <div class="file-upload-area" id="src-drop" onclick="document.getElementById('src-file').click()"
+               ondragover="dragOver(event,'src-drop')" ondragleave="dragLeave('src-drop')" ondrop="dropFile(event,'src-file','src-drop','src-fname')">
+            <div class="icon">📄</div>
+            <div class="label"><span>Click to upload</span> or drag & drop</div>
+            <div class="label" style="font-size:11px;margin-top:3px;">.xsd, .wsdl, .xml</div>
+            <div class="fname" id="src-fname"></div>
+          </div>
+          <input type="file" id="src-file" name="source_schema" accept=".xsd,.wsdl,.xml" style="display:none" onchange="showFileName(this,'src-fname','src-drop')">
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label>Target XSD / WSDL <span style="color:var(--text-tertiary);font-weight:400;text-transform:none;">(CPI Output)</span></label>
+          <div class="file-upload-area" id="tgt-drop" onclick="document.getElementById('tgt-file').click()"
+               ondragover="dragOver(event,'tgt-drop')" ondragleave="dragLeave('tgt-drop')" ondrop="dropFile(event,'tgt-file','tgt-drop','tgt-fname')">
+            <div class="icon">📄</div>
+            <div class="label"><span>Click to upload</span> or drag & drop</div>
+            <div class="label" style="font-size:11px;margin-top:3px;">.xsd, .wsdl, .xml</div>
+            <div class="fname" id="tgt-fname"></div>
+          </div>
+          <input type="file" id="tgt-file" name="target_schema" accept=".xsd,.wsdl,.xml" style="display:none" onchange="showFileName(this,'tgt-fname','tgt-drop')">
+        </div>
+      </div>
+
       <div class="form-actions">
         <a href="{{ url_for('main.home') }}" class="btn btn-secondary">Cancel</a>
         <button class="btn btn-primary" id="create-btn" onclick="createProject()">
@@ -99,6 +137,23 @@
     wc.className = count > 100 ? 'word-count over' : count > 85 ? 'word-count warn' : 'word-count';
   }
 
+  function showFileName(input, fnameId, dropId) {
+    const fname = document.getElementById(fnameId);
+    if (input.files[0]) {
+      fname.textContent = '✓ ' + input.files[0].name;
+      document.getElementById(dropId).style.borderColor = 'var(--success)';
+    }
+  }
+  function dragOver(e, dropId) { e.preventDefault(); document.getElementById(dropId).classList.add('drag'); }
+  function dragLeave(dropId) { document.getElementById(dropId).classList.remove('drag'); }
+  function dropFile(e, fileInputId, dropId, fnameId) {
+    e.preventDefault(); dragLeave(dropId);
+    if (e.dataTransfer.files.length) {
+      document.getElementById(fileInputId).files = e.dataTransfer.files;
+      showFileName(document.getElementById(fileInputId), fnameId, dropId);
+    }
+  }
+
   async function createProject() {
     const name = document.getElementById('proj-name').value.trim();
     const desc = document.getElementById('proj-desc').value.trim();
@@ -118,28 +173,41 @@
     document.getElementById('create-spinner').style.display = 'block';
     document.getElementById('create-btn-text').textContent = 'Creating…';
 
-    const res = await apiFetch('/project/new', {
-      method: 'POST',
-      body: JSON.stringify({ name, description: desc })
-    });
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('description', desc);
+    const srcFile = document.getElementById('src-file').files[0];
+    const tgtFile = document.getElementById('tgt-file').files[0];
+    if (srcFile) formData.append('source_schema', srcFile);
+    if (tgtFile) formData.append('target_schema', tgtFile);
 
-    btn.disabled = false;
-    document.getElementById('create-spinner').style.display = 'none';
-    document.getElementById('create-btn-text').textContent = 'Create Project →';
+    try {
+      const res = await fetch('/project/new', { method: 'POST', body: formData });
+      const data = await res.json();
 
-    if (res.data.success) {
-      showToast('Project created!', 'success');
-      window.location.href = res.data.redirect;
-    } else {
-      const alertEl = document.getElementById('form-alert');
-      alertEl.className = 'alert alert-error';
-      alertEl.style.display = 'flex';
-      alertEl.innerHTML = `<span>✕</span><span>${res.data.message || 'Failed to create project.'}</span>`;
+      btn.disabled = false;
+      document.getElementById('create-spinner').style.display = 'none';
+      document.getElementById('create-btn-text').textContent = 'Create Project →';
+
+      if (data.success) {
+        showToast('Project created!', 'success');
+        window.location.href = data.redirect;
+      } else {
+        const alertEl = document.getElementById('form-alert');
+        alertEl.className = 'alert alert-error';
+        alertEl.style.display = 'flex';
+        alertEl.innerHTML = `<span>✕</span><span>${data.message || 'Failed to create project.'}</span>`;
+      }
+    } catch(err) {
+      btn.disabled = false;
+      document.getElementById('create-spinner').style.display = 'none';
+      document.getElementById('create-btn-text').textContent = 'Create Project →';
+      showToast('Network error. Please try again.', 'error');
     }
   }
 
   document.addEventListener('keydown', e => {
-    if (e.key === 'Enter' && !e.shiftKey && document.activeElement.id !== 'proj-desc') createProject();
+    if (e.key === 'Enter' && !e.shiftKey && document.activeElement.tagName !== 'TEXTAREA') createProject();
   });
 </script>
 {% endblock %}

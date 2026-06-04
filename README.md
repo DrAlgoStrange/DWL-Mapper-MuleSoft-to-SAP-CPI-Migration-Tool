@@ -75,7 +75,7 @@ Open [http://localhost:5000](http://localhost:5000)
 
 ## How It Works
 
-1. **Register** with your  email.
+1. **Register** with your `@its.jnj.com` email.
 2. **Create a Project** for each migration interface.
 3. **Add DWL Scripts** — paste each DataWeave step, upload source/target XSD/WSDL schemas, and optionally provide sample input/output payloads.
 4. **Generate** — the AI analyses all DWL steps together and produces a unified CPI mapping sheet.
@@ -105,6 +105,18 @@ The output `.xlsx` contains 3 sheets:
 
 ---
 
+## Supported Models (AWS Bedrock)
+
+The app tries models in this order:
+1. `us.anthropic.claude-sonnet-4-20250514-v1:0` (primary)
+2. `us.anthropic.claude-3-5-sonnet-20241022-v2:0` (fallback)
+
+Change in `.env`:
+```env
+PRIMARY_MODEL=us.anthropic.claude-opus-4-20250514-v1:0
+```
+
+---
 
 ## Running Tests
 
@@ -124,6 +136,7 @@ Check this file if any operation fails — every API call, LLM request, and DB o
 ## Security
 
 - Passwords: bcrypt hashed, 8+ chars, uppercase + special char enforced
+- Email: restricted to `@its.jnj.com` domain
 - Sessions: Flask-Login with secure secret key
 - All file uploads validated by extension
 - SQL injection protected via SQLAlchemy ORM

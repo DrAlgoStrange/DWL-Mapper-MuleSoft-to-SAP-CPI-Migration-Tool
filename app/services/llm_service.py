@@ -102,37 +102,53 @@ def call_llm_with_fallback(prompt: str, app_config: dict, max_tokens: int = 4096
     raise RuntimeError("All LLM models failed.")
 
 
-def build_dwl_analysis_prompt(dwl_entries: list) -> str:
+def build_dwl_analysis_prompt(
+    dwl_entries: list,
+    source_schema: str = None,
+    source_schema_filename: str = None,
+    target_schema: str = None,
+    target_schema_filename: str = None,
+) -> str:
     """
     Build a structured prompt for the LLM to analyze multiple DWL scripts
     and produce a CPI mapping sheet.
+    Schemas are project-level: source = CPI input structure, target = CPI output structure.
     """
+
+    # ── Schema block (once, at the top) ───────────────────────────────────
+    schema_block = ""
+    if source_schema:
+        fname = f" ({source_schema_filename})" if source_schema_filename else ""
+        schema_block += f"""
+=== CPI MAPPING INPUT STRUCTURE — Source XSD/WSDL{fname} ===
+This defines the overall INPUT payload structure that enters the SAP CPI mapping.
+{source_schema[:4000]}
+"""
+    if target_schema:
+        fname = f" ({target_schema_filename})" if target_schema_filename else ""
+        schema_block += f"""
+=== CPI MAPPING OUTPUT STRUCTURE — Target XSD/WSDL{fname} ===
+This defines the overall OUTPUT payload structure that exits the SAP CPI mapping.
+{target_schema[:4000]}
+"""
+
+    # ── DWL sections ──────────────────────────────────────────────────────
     dwl_sections = []
     for i, entry in enumerate(dwl_entries, 1):
         section = f"""
-=== DWL #{i}: {entry.get('dwl_name', f'Step {i}')} ===
+=== DWL Step #{i}: {entry.get('dwl_name', f'Step {i}')} ===
 
 --- DataWeave Script ---
 {entry.get('dwl_content', '(not provided)')}
 """
-        if entry.get('source_schema'):
-            section += f"""
---- Source Schema (XSD/WSDL) ---
-{entry.get('source_schema', '')[:3000]}
-"""
-        if entry.get('target_schema'):
-            section += f"""
---- Target Schema (XSD/WSDL) ---
-{entry.get('target_schema', '')[:3000]}
-"""
         if entry.get('sample_input'):
             section += f"""
---- Sample Input Payload ---
+--- Sample Input Payload (Step {i}) ---
 {entry.get('sample_input', '')[:2000]}
 """
         if entry.get('sample_output'):
             section += f"""
---- Sample Output Payload ---
+--- Sample Output Payload (Step {i}) ---
 {entry.get('sample_output', '')[:2000]}
 """
         dwl_sections.append(section)
@@ -145,23 +161,28 @@ TASK: Analyze the following MuleSoft DataWeave (DWL) transformation script(s) an
 
 CONTEXT:
 - We are migrating APIs from MuleSoft to SAP CPI (Cloud Platform Integration).
-- MuleSoft uses DataWeave (DWL) for payload transformation.
-- SAP CPI uses Graphical Message Mapping.
-- There may be MULTIPLE DWL steps that together form a complete transformation pipeline.
-- In CPI, ALL these steps must be combined into ONE single graphical mapping.
-- The INPUT to the CPI mapping = the first DWL's input; the OUTPUT = the last DWL's output.
+- MuleSoft uses DataWeave (DWL) for payload transformation across multiple steps.
+- SAP CPI uses a single Graphical Message Mapping to handle the full transformation.
+- ALL DWL steps below must be combined into ONE unified CPI mapping.
+- The Source XSD defines the INPUT structure of the CPI mapping (what comes in).
+- The Target XSD defines the OUTPUT structure of the CPI mapping (what goes out).
+- The DWL scripts describe the intermediate transformation logic to achieve this.
+
+{schema_block}
 
 {all_dwls}
 
 INSTRUCTIONS:
-Analyze every field transformation across all DWL scripts and produce a mapping sheet.
+Analyse every field transformation across all DWL steps and produce a complete mapping sheet.
+Use the Source XSD as the authoritative reference for source field paths and data types.
+Use the Target XSD as the authoritative reference for target field names, segments, and data types.
 For EACH target field, identify:
-1. The target segment/element path
+1. The target segment/element path (from Target XSD)
 2. The target field name
 3. A short field description
 4. Data type (CHAR, NUM, DATE, etc.)
-5. Max length if determinable
-6. The source field path (or "—" if hardcoded/config)
+5. Max length if determinable from XSD
+6. The source field path (from Source XSD, or "—" if hardcoded/config)
 7. The mapping logic — one of:
    - "Pass-through" (direct 1:1 copy)
    - "Hardcoded: <value>" (fixed constant)
@@ -213,7 +234,7 @@ The JSON must have this exact structure:
   ]
 }}
 
-Be thorough — include EVERY field you can identify from the DWL logic, schemas, and sample payloads.
+Be thorough — include EVERY field from the Target XSD that you can identify a mapping for.
 Focus on accuracy and practical CPI guidance.
 """
     return prompt

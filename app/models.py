@@ -44,6 +44,13 @@ class Project(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     status = db.Column(db.String(50), default='draft')  # draft, processing, completed, error
 
+    # XSD/WSDL schemas stored once at project level —
+    # source = CPI mapping input structure, target = CPI mapping output structure
+    source_schema_filename = db.Column(db.String(255), nullable=True)
+    source_schema_content = db.Column(db.Text, nullable=True)
+    target_schema_filename = db.Column(db.String(255), nullable=True)
+    target_schema_content = db.Column(db.Text, nullable=True)
+
     dwls = db.relationship('DWLEntry', backref='project', lazy=True, cascade='all, delete-orphan')
     mapping_results = db.relationship('MappingResult', backref='project', lazy=True, cascade='all, delete-orphan')
 
@@ -61,10 +68,6 @@ class DWLEntry(db.Model):
     dwl_content = db.Column(db.Text, nullable=False)
     sample_input = db.Column(db.Text, nullable=True)
     sample_output = db.Column(db.Text, nullable=True)
-    source_schema_filename = db.Column(db.String(255), nullable=True)
-    source_schema_content = db.Column(db.Text, nullable=True)
-    target_schema_filename = db.Column(db.String(255), nullable=True)
-    target_schema_content = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):

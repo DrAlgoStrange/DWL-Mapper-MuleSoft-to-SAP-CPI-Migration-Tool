@@ -75,7 +75,7 @@ Open [http://localhost:5000](http://localhost:5000)
 
 ## How It Works
 
-1. **Register** with your `@its.jnj.com` email.
+1. **Register** with your  email.
 2. **Create a Project** for each migration interface.
 3. **Add DWL Scripts** — paste each DataWeave step, upload source/target XSD/WSDL schemas, and optionally provide sample input/output payloads.
 4. **Generate** — the AI analyses all DWL steps together and produces a unified CPI mapping sheet.

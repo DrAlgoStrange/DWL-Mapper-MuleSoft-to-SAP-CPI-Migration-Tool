@@ -188,8 +188,6 @@
               <div class="dwl-seq">{{ dwl.sequence_number }}</div>
               <div class="dwl-name">{{ dwl.dwl_name }}</div>
               <div class="dwl-chips">
-                <span class="dwl-chip {% if dwl.source_schema_content %}has{% endif %}">SRC XSD</span>
-                <span class="dwl-chip {% if dwl.target_schema_content %}has{% endif %}">TGT XSD</span>
                 <span class="dwl-chip {% if dwl.sample_input %}has{% endif %}">Input</span>
                 <span class="dwl-chip {% if dwl.sample_output %}has{% endif %}">Output</span>
               </div>
@@ -199,8 +197,6 @@
               <div class="dwl-snippet">{{ dwl.dwl_content[:600] }}{% if dwl.dwl_content | length > 600 %}
 ... ({{ dwl.dwl_content | length }} chars total){% endif %}</div>
               <div class="dwl-body-meta">
-                {% if dwl.source_schema_filename %}<span>📄 Source: {{ dwl.source_schema_filename }}</span>{% endif %}
-                {% if dwl.target_schema_filename %}<span>📄 Target: {{ dwl.target_schema_filename }}</span>{% endif %}
                 {% if dwl.sample_input %}<span>✓ Sample input provided</span>{% endif %}
                 {% if dwl.sample_output %}<span>✓ Sample output provided</span>{% endif %}
               </div>

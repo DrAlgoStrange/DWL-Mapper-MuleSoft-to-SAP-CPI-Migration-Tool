@@ -38,10 +38,34 @@ def create_app(config_name: str = None) -> Flask:
     # ── Database init ──────────────────────────────────────────────────────
     with app.app_context():
         db.create_all()
+        _auto_migrate(app)
         app.logger.info("Database tables created / verified.")
 
     app.logger.info(f"DWL Mapper started | env={config_name}")
     return app
+
+
+def _auto_migrate(app: Flask):
+    """
+    Lightweight auto-migration: adds any missing columns to existing tables.
+    Prevents crashes when upgrading from an older schema without wiping the DB.
+    """
+    import sqlalchemy as sa
+    migrations = [
+        ("projects", "source_schema_filename", "VARCHAR(255)"),
+        ("projects", "source_schema_content",  "TEXT"),
+        ("projects", "target_schema_filename", "VARCHAR(255)"),
+        ("projects", "target_schema_content",  "TEXT"),
+    ]
+    with db.engine.connect() as conn:
+        for table, column, col_type in migrations:
+            try:
+                conn.execute(sa.text(f"ALTER TABLE {table} ADD COLUMN {column} {col_type}"))
+                conn.commit()
+                app.logger.info(f"Auto-migration: added column {table}.{column}")
+            except Exception:
+                # Column already exists — that's fine, skip silently
+                pass
 
 
 def _setup_logging(app: Flask):

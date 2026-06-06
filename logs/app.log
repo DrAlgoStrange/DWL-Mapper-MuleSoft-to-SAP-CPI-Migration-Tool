@@ -39,3 +39,51 @@
 [2026-06-04 10:37:35] INFO in routes (new_project:55): New project created: 'Orders_To_Cash' by user 1
 [2026-06-04 10:37:35] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 10:37:35] "POST /project/new HTTP/1.1" 200 -
 [2026-06-04 10:37:35] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 10:37:35] "GET /project/1 HTTP/1.1" 200 -
+[2026-06-04 11:56:55] INFO in __init__ (_setup_logging:76): Logging configured.
+[2026-06-04 11:56:55] INFO in __init__ (create_app:41): Database tables created / verified.
+[2026-06-04 11:56:55] INFO in __init__ (create_app:43): DWL Mapper started | env=development
+[2026-06-04 11:56:55] INFO in _internal (_log:97): [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.29.196:5000
+[2026-06-04 11:56:55] INFO in _internal (_log:97): [33mPress CTRL+C to quit[0m
+[2026-06-04 11:56:55] INFO in _internal (_log:97):  * Restarting with stat
+[2026-06-04 11:56:55] INFO in __init__ (_setup_logging:76): Logging configured.
+[2026-06-04 11:56:56] INFO in __init__ (create_app:41): Database tables created / verified.
+[2026-06-04 11:56:56] INFO in __init__ (create_app:43): DWL Mapper started | env=development
+[2026-06-04 11:56:56] WARNING in _internal (_log:97):  * Debugger is active!
+[2026-06-04 11:56:56] INFO in _internal (_log:97):  * Debugger PIN: 118-627-149
+[2026-06-04 11:57:20] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 11:57:20] "GET /project/new HTTP/1.1" 200 -
+[2026-06-04 11:58:18] INFO in __init__ (_setup_logging:76): Logging configured.
+[2026-06-04 11:58:18] INFO in __init__ (create_app:41): Database tables created / verified.
+[2026-06-04 11:58:18] INFO in __init__ (create_app:43): DWL Mapper started | env=development
+[2026-06-04 11:58:18] INFO in _internal (_log:97): [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.29.196:5000
+[2026-06-04 11:58:18] INFO in _internal (_log:97): [33mPress CTRL+C to quit[0m
+[2026-06-04 11:58:18] INFO in _internal (_log:97):  * Restarting with stat
+[2026-06-04 11:58:18] INFO in __init__ (_setup_logging:76): Logging configured.
+[2026-06-04 11:58:19] INFO in __init__ (create_app:41): Database tables created / verified.
+[2026-06-04 11:58:19] INFO in __init__ (create_app:43): DWL Mapper started | env=development
+[2026-06-04 11:58:19] WARNING in _internal (_log:97):  * Debugger is active!
+[2026-06-04 11:58:19] INFO in _internal (_log:97):  * Debugger PIN: 118-627-149
+[2026-06-04 11:58:36] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 11:58:36] "[32mGET / HTTP/1.1[0m" 302 -
+[2026-06-04 11:58:36] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 11:58:36] "GET /auth/login HTTP/1.1" 200 -
+[2026-06-04 11:59:18] INFO in routes (register:96): New user registered: abc@its.jnj.com
+[2026-06-04 11:59:18] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 11:59:18] "POST /auth/register HTTP/1.1" 200 -
+[2026-06-04 11:59:18] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 11:59:18] "GET /home HTTP/1.1" 200 -
+[2026-06-04 11:59:20] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 11:59:20] "GET /project/new HTTP/1.1" 200 -
+[2026-06-04 11:59:28] INFO in routes (new_project:93): New project created: 'Orders_To_Cash' by user 1
+[2026-06-04 11:59:28] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 11:59:28] "POST /project/new HTTP/1.1" 200 -
+[2026-06-04 11:59:28] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 11:59:28] "GET /project/1 HTTP/1.1" 200 -
+[2026-06-04 11:59:43] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 11:59:43] "GET /home HTTP/1.1" 200 -
+[2026-06-04 12:00:02] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 12:00:02] "GET /project/new HTTP/1.1" 200 -
+[2026-06-04 12:00:07] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 12:00:07] "GET /project/1 HTTP/1.1" 200 -
+[2026-06-04 12:00:09] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 12:00:09] "GET /project/1 HTTP/1.1" 200 -
+[2026-06-04 12:00:20] INFO in routes (delete_project:124): Project 1 deleted by user 1
+[2026-06-04 12:00:20] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 12:00:20] "POST /project/1/delete HTTP/1.1" 200 -
+[2026-06-04 12:00:21] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 12:00:21] "GET /home HTTP/1.1" 200 -
+[2026-06-04 12:00:23] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 12:00:23] "GET /project/new HTTP/1.1" 200 -
+[2026-06-04 12:00:25] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 12:00:25] "GET /home HTTP/1.1" 200 -
+[2026-06-04 12:00:36] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 12:00:36] "GET /project/new HTTP/1.1" 200 -

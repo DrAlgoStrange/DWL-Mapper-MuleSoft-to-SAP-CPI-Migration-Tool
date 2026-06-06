@@ -1,89 +1,155 @@
-[2026-06-04 10:19:31] INFO in __init__ (_setup_logging:76): Logging configured.
-[2026-06-04 10:19:31] INFO in __init__ (create_app:41): Database tables created / verified.
-[2026-06-04 10:19:31] INFO in __init__ (create_app:43): DWL Mapper started | env=development
-[2026-06-04 10:19:31] INFO in _internal (_log:97): [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+[2026-06-06 23:50:47] INFO in __init__ (_setup_logging:100): Logging configured.
+[2026-06-06 23:50:47] INFO in __init__ (create_app:42): Database tables created / verified.
+[2026-06-06 23:50:47] INFO in __init__ (create_app:44): DWL Mapper started | env=development
+[2026-06-06 23:50:47] INFO in _internal (_log:97): [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on all addresses (0.0.0.0)
  * Running on http://127.0.0.1:5000
  * Running on http://192.168.29.196:5000
-[2026-06-04 10:19:31] INFO in _internal (_log:97): [33mPress CTRL+C to quit[0m
-[2026-06-04 10:19:31] INFO in _internal (_log:97):  * Restarting with stat
-[2026-06-04 10:19:32] INFO in __init__ (_setup_logging:76): Logging configured.
-[2026-06-04 10:19:32] INFO in __init__ (create_app:41): Database tables created / verified.
-[2026-06-04 10:19:32] INFO in __init__ (create_app:43): DWL Mapper started | env=development
-[2026-06-04 10:19:32] WARNING in _internal (_log:97):  * Debugger is active!
-[2026-06-04 10:19:32] INFO in _internal (_log:97):  * Debugger PIN: 118-627-149
-[2026-06-04 10:19:52] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 10:19:52] "[32mGET / HTTP/1.1[0m" 302 -
-[2026-06-04 10:19:52] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 10:19:52] "GET /auth/login HTTP/1.1" 200 -
-[2026-06-04 10:19:52] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 10:19:52] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-[2026-06-04 10:36:10] INFO in __init__ (_setup_logging:76): Logging configured.
-[2026-06-04 10:36:11] INFO in __init__ (create_app:41): Database tables created / verified.
-[2026-06-04 10:36:11] INFO in __init__ (create_app:43): DWL Mapper started | env=development
-[2026-06-04 10:36:11] INFO in _internal (_log:97): [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on all addresses (0.0.0.0)
- * Running on http://127.0.0.1:5000
- * Running on http://192.168.29.196:5000
-[2026-06-04 10:36:11] INFO in _internal (_log:97): [33mPress CTRL+C to quit[0m
-[2026-06-04 10:36:11] INFO in _internal (_log:97):  * Restarting with stat
-[2026-06-04 10:36:11] INFO in __init__ (_setup_logging:76): Logging configured.
-[2026-06-04 10:36:11] INFO in __init__ (create_app:41): Database tables created / verified.
-[2026-06-04 10:36:11] INFO in __init__ (create_app:43): DWL Mapper started | env=development
-[2026-06-04 10:36:11] WARNING in _internal (_log:97):  * Debugger is active!
-[2026-06-04 10:36:11] INFO in _internal (_log:97):  * Debugger PIN: 118-627-149
-[2026-06-04 10:36:16] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 10:36:16] "GET /auth/login HTTP/1.1" 200 -
-[2026-06-04 10:36:59] INFO in routes (register:96): New user registered: abc@its.jnj.com
-[2026-06-04 10:36:59] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 10:36:59] "POST /auth/register HTTP/1.1" 200 -
-[2026-06-04 10:36:59] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 10:36:59] "GET /home HTTP/1.1" 200 -
-[2026-06-04 10:37:03] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 10:37:03] "GET /project/new HTTP/1.1" 200 -
-[2026-06-04 10:37:05] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 10:37:05] "GET /home HTTP/1.1" 200 -
-[2026-06-04 10:37:13] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 10:37:13] "GET /project/new HTTP/1.1" 200 -
-[2026-06-04 10:37:35] INFO in routes (new_project:55): New project created: 'Orders_To_Cash' by user 1
-[2026-06-04 10:37:35] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 10:37:35] "POST /project/new HTTP/1.1" 200 -
-[2026-06-04 10:37:35] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 10:37:35] "GET /project/1 HTTP/1.1" 200 -
-[2026-06-04 11:56:55] INFO in __init__ (_setup_logging:76): Logging configured.
-[2026-06-04 11:56:55] INFO in __init__ (create_app:41): Database tables created / verified.
-[2026-06-04 11:56:55] INFO in __init__ (create_app:43): DWL Mapper started | env=development
-[2026-06-04 11:56:55] INFO in _internal (_log:97): [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on all addresses (0.0.0.0)
- * Running on http://127.0.0.1:5000
- * Running on http://192.168.29.196:5000
-[2026-06-04 11:56:55] INFO in _internal (_log:97): [33mPress CTRL+C to quit[0m
-[2026-06-04 11:56:55] INFO in _internal (_log:97):  * Restarting with stat
-[2026-06-04 11:56:55] INFO in __init__ (_setup_logging:76): Logging configured.
-[2026-06-04 11:56:56] INFO in __init__ (create_app:41): Database tables created / verified.
-[2026-06-04 11:56:56] INFO in __init__ (create_app:43): DWL Mapper started | env=development
-[2026-06-04 11:56:56] WARNING in _internal (_log:97):  * Debugger is active!
-[2026-06-04 11:56:56] INFO in _internal (_log:97):  * Debugger PIN: 118-627-149
-[2026-06-04 11:57:20] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 11:57:20] "GET /project/new HTTP/1.1" 200 -
-[2026-06-04 11:58:18] INFO in __init__ (_setup_logging:76): Logging configured.
-[2026-06-04 11:58:18] INFO in __init__ (create_app:41): Database tables created / verified.
-[2026-06-04 11:58:18] INFO in __init__ (create_app:43): DWL Mapper started | env=development
-[2026-06-04 11:58:18] INFO in _internal (_log:97): [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on all addresses (0.0.0.0)
- * Running on http://127.0.0.1:5000
- * Running on http://192.168.29.196:5000
-[2026-06-04 11:58:18] INFO in _internal (_log:97): [33mPress CTRL+C to quit[0m
-[2026-06-04 11:58:18] INFO in _internal (_log:97):  * Restarting with stat
-[2026-06-04 11:58:18] INFO in __init__ (_setup_logging:76): Logging configured.
-[2026-06-04 11:58:19] INFO in __init__ (create_app:41): Database tables created / verified.
-[2026-06-04 11:58:19] INFO in __init__ (create_app:43): DWL Mapper started | env=development
-[2026-06-04 11:58:19] WARNING in _internal (_log:97):  * Debugger is active!
-[2026-06-04 11:58:19] INFO in _internal (_log:97):  * Debugger PIN: 118-627-149
-[2026-06-04 11:58:36] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 11:58:36] "[32mGET / HTTP/1.1[0m" 302 -
-[2026-06-04 11:58:36] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 11:58:36] "GET /auth/login HTTP/1.1" 200 -
-[2026-06-04 11:59:18] INFO in routes (register:96): New user registered: abc@its.jnj.com
-[2026-06-04 11:59:18] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 11:59:18] "POST /auth/register HTTP/1.1" 200 -
-[2026-06-04 11:59:18] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 11:59:18] "GET /home HTTP/1.1" 200 -
-[2026-06-04 11:59:20] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 11:59:20] "GET /project/new HTTP/1.1" 200 -
-[2026-06-04 11:59:28] INFO in routes (new_project:93): New project created: 'Orders_To_Cash' by user 1
-[2026-06-04 11:59:28] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 11:59:28] "POST /project/new HTTP/1.1" 200 -
-[2026-06-04 11:59:28] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 11:59:28] "GET /project/1 HTTP/1.1" 200 -
-[2026-06-04 11:59:43] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 11:59:43] "GET /home HTTP/1.1" 200 -
-[2026-06-04 12:00:02] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 12:00:02] "GET /project/new HTTP/1.1" 200 -
-[2026-06-04 12:00:07] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 12:00:07] "GET /project/1 HTTP/1.1" 200 -
-[2026-06-04 12:00:09] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 12:00:09] "GET /project/1 HTTP/1.1" 200 -
-[2026-06-04 12:00:20] INFO in routes (delete_project:124): Project 1 deleted by user 1
-[2026-06-04 12:00:20] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 12:00:20] "POST /project/1/delete HTTP/1.1" 200 -
-[2026-06-04 12:00:21] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 12:00:21] "GET /home HTTP/1.1" 200 -
-[2026-06-04 12:00:23] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 12:00:23] "GET /project/new HTTP/1.1" 200 -
-[2026-06-04 12:00:25] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 12:00:25] "GET /home HTTP/1.1" 200 -
-[2026-06-04 12:00:36] INFO in _internal (_log:97): 127.0.0.1 - - [04/Jun/2026 12:00:36] "GET /project/new HTTP/1.1" 200 -
+[2026-06-06 23:50:47] INFO in _internal (_log:97): [33mPress CTRL+C to quit[0m
+[2026-06-06 23:50:47] INFO in _internal (_log:97):  * Restarting with stat
+[2026-06-06 23:50:47] INFO in __init__ (_setup_logging:100): Logging configured.
+[2026-06-06 23:50:47] INFO in __init__ (create_app:42): Database tables created / verified.
+[2026-06-06 23:50:47] INFO in __init__ (create_app:44): DWL Mapper started | env=development
+[2026-06-06 23:50:47] WARNING in _internal (_log:97):  * Debugger is active!
+[2026-06-06 23:50:47] INFO in _internal (_log:97):  * Debugger PIN: 118-627-149
+[2026-06-06 23:51:07] INFO in _internal (_log:97): 127.0.0.1 - - [06/Jun/2026 23:51:07] "[32mGET /project/1 HTTP/1.1[0m" 302 -
+[2026-06-06 23:51:07] INFO in _internal (_log:97): 127.0.0.1 - - [06/Jun/2026 23:51:07] "GET /auth/login?next=/project/1 HTTP/1.1" 200 -
+[2026-06-06 23:51:25] WARNING in routes (login:31): Failed login attempt for email: abc@its.jnj.com
+[2026-06-06 23:51:25] INFO in _internal (_log:97): 127.0.0.1 - - [06/Jun/2026 23:51:25] "[31m[1mPOST /auth/login HTTP/1.1[0m" 401 -
+[2026-06-06 23:51:57] INFO in routes (register:96): New user registered: abc@its.jnj.com
+[2026-06-06 23:51:57] INFO in _internal (_log:97): 127.0.0.1 - - [06/Jun/2026 23:51:57] "POST /auth/register HTTP/1.1" 200 -
+[2026-06-06 23:51:57] INFO in _internal (_log:97): 127.0.0.1 - - [06/Jun/2026 23:51:57] "GET /home HTTP/1.1" 200 -
+[2026-06-06 23:51:59] INFO in _internal (_log:97): 127.0.0.1 - - [06/Jun/2026 23:51:59] "GET /project/new HTTP/1.1" 200 -
+[2026-06-06 23:52:17] INFO in routes (new_project:68): Project source schema uploaded: schema (4).xsd
+[2026-06-06 23:52:17] INFO in routes (new_project:78): Project target schema uploaded: schema (3).xsd
+[2026-06-06 23:52:17] INFO in routes (new_project:93): New project created: 'Orders_To_Cash' by user 1
+[2026-06-06 23:52:17] INFO in _internal (_log:97): 127.0.0.1 - - [06/Jun/2026 23:52:17] "POST /project/new HTTP/1.1" 200 -
+[2026-06-06 23:52:17] INFO in _internal (_log:97): 127.0.0.1 - - [06/Jun/2026 23:52:17] "GET /project/1 HTTP/1.1" 200 -
+[2026-06-06 23:52:36] INFO in routes (add_dwl:53): DWL entry added to project 1: seq=1
+[2026-06-06 23:52:36] INFO in _internal (_log:97): 127.0.0.1 - - [06/Jun/2026 23:52:36] "POST /api/project/1/dwl HTTP/1.1" 200 -
+[2026-06-06 23:52:36] INFO in _internal (_log:97): 127.0.0.1 - - [06/Jun/2026 23:52:36] "GET /project/1 HTTP/1.1" 200 -
+[2026-06-06 23:52:46] INFO in routes (generate_mapping:165): Generating mapping for project 1 with 1 DWL(s)
+[2026-06-06 23:52:46] DEBUG in auth (add_auth:436): Calculating signature using v4 auth.
+[2026-06-06 23:52:46] DEBUG in auth (add_auth:437): CanonicalRequest:
+POST
+/model/us.anthropic.claude-sonnet-4-20250514-v1%3A0/invoke
+
+content-type:application/json
+host:your-bedrock-gateway-endpoint.com
+x-amz-date:20260606T182246Z
+
+content-type;host;x-amz-date
+6bcff17c3fcedd04e2cbdf7b45814a6e304a672326713182887d017ced323f8c
+[2026-06-06 23:52:46] DEBUG in auth (add_auth:439): StringToSign:
+AWS4-HMAC-SHA256
+20260606T182246Z
+20260606/us-east-1/bedrock/aws4_request
+2a0c768bc321f8181215fb01183006370fe3230b5cce9d1fcfa9908dc1a93e4a
+[2026-06-06 23:52:46] DEBUG in auth (add_auth:441): Signature:
+65f2f5ceab94021e60a702b9b36ca77f5e45ececd638bd42159ae3a06759deca
+[2026-06-06 23:52:46] INFO in llm_service (call_bedrock_model:65): Calling Bedrock model: us.anthropic.claude-sonnet-4-20250514-v1:0
+[2026-06-06 23:52:46] DEBUG in connectionpool (_new_conn:1049): Starting new HTTPS connection (1): your-bedrock-gateway-endpoint.com:443
+[2026-06-06 23:52:46] WARNING in llm_service (call_llm_with_fallback:98): Model us.anthropic.claude-sonnet-4-20250514-v1:0 failed: HTTPSConnectionPool(host='your-bedrock-gateway-endpoint.com', port=443): Max retries exceeded with url: /model/us.anthropic.claude-sonnet-4-20250514-v1:0/invoke (Caused by NameResolutionError("HTTPSConnection(host='your-bedrock-gateway-endpoint.com', port=443): Failed to resolve 'your-bedrock-gateway-endpoint.com' ([Errno 11001] getaddrinfo failed)"))
+[2026-06-06 23:52:46] DEBUG in auth (add_auth:436): Calculating signature using v4 auth.
+[2026-06-06 23:52:46] DEBUG in auth (add_auth:437): CanonicalRequest:
+POST
+/model/us.anthropic.claude-3-5-sonnet-20241022-v2%3A0/invoke
+
+content-type:application/json
+host:your-bedrock-gateway-endpoint.com
+x-amz-date:20260606T182246Z
+
+content-type;host;x-amz-date
+6bcff17c3fcedd04e2cbdf7b45814a6e304a672326713182887d017ced323f8c
+[2026-06-06 23:52:46] DEBUG in auth (add_auth:439): StringToSign:
+AWS4-HMAC-SHA256
+20260606T182246Z
+20260606/us-east-1/bedrock/aws4_request
+5f63c971b54475d2b2d0ddbcf4fb2f41c637f5621354d22658ef17b562b67e77
+[2026-06-06 23:52:46] DEBUG in auth (add_auth:441): Signature:
+d317b93d9eef181fea347ebfb2168b7d3aa2ae58f5f1b6fbc5c481dfcb63e8df
+[2026-06-06 23:52:46] INFO in llm_service (call_bedrock_model:65): Calling Bedrock model: us.anthropic.claude-3-5-sonnet-20241022-v2:0
+[2026-06-06 23:52:46] DEBUG in connectionpool (_new_conn:1049): Starting new HTTPS connection (1): your-bedrock-gateway-endpoint.com:443
+[2026-06-06 23:52:46] WARNING in llm_service (call_llm_with_fallback:98): Model us.anthropic.claude-3-5-sonnet-20241022-v2:0 failed: HTTPSConnectionPool(host='your-bedrock-gateway-endpoint.com', port=443): Max retries exceeded with url: /model/us.anthropic.claude-3-5-sonnet-20241022-v2:0/invoke (Caused by NameResolutionError("HTTPSConnection(host='your-bedrock-gateway-endpoint.com', port=443): Failed to resolve 'your-bedrock-gateway-endpoint.com' ([Errno 11001] getaddrinfo failed)"))
+[2026-06-06 23:52:46] ERROR in routes (generate_mapping:187): LLM call failed for project 1: HTTPSConnectionPool(host='your-bedrock-gateway-endpoint.com', port=443): Max retries exceeded with url: /model/us.anthropic.claude-3-5-sonnet-20241022-v2:0/invoke (Caused by NameResolutionError("HTTPSConnection(host='your-bedrock-gateway-endpoint.com', port=443): Failed to resolve 'your-bedrock-gateway-endpoint.com' ([Errno 11001] getaddrinfo failed)"))
+Traceback (most recent call last):
+  File "C:\Users\Surya\AppData\Roaming\Python\Python313\site-packages\urllib3\connection.py", line 204, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "C:\Users\Surya\AppData\Roaming\Python\Python313\site-packages\urllib3\util\connection.py", line 60, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python313\Lib\socket.py", line 977, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Surya\AppData\Roaming\Python\Python313\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\Users\Surya\AppData\Roaming\Python\Python313\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "C:\Users\Surya\AppData\Roaming\Python\Python313\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Surya\AppData\Roaming\Python\Python313\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\Surya\AppData\Roaming\Python\Python313\site-packages\urllib3\connection.py", line 759, in connect
+    self.sock = sock = self._new_conn()
+                       ~~~~~~~~~~~~~~^^
+  File "C:\Users\Surya\AppData\Roaming\Python\Python313\site-packages\urllib3\connection.py", line 211, in _new_conn
+    raise NameResolutionError(self.host, self, e) from e
+urllib3.exceptions.NameResolutionError: HTTPSConnection(host='your-bedrock-gateway-endpoint.com', port=443): Failed to resolve 'your-bedrock-gateway-endpoint.com' ([Errno 11001] getaddrinfo failed)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Surya\AppData\Roaming\Python\Python313\site-packages\requests\adapters.py", line 644, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\Users\Surya\AppData\Roaming\Python\Python313\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\Users\Surya\AppData\Roaming\Python\Python313\site-packages\urllib3\util\retry.py", line 535, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='your-bedrock-gateway-endpoint.com', port=443): Max retries exceeded with url: /model/us.anthropic.claude-3-5-sonnet-20241022-v2:0/invoke (Caused by NameResolutionError("HTTPSConnection(host='your-bedrock-gateway-endpoint.com', port=443): Failed to resolve 'your-bedrock-gateway-endpoint.com' ([Errno 11001] getaddrinfo failed)"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "c:\Users\Surya\Downloads\dwl_mapper (3)\dwl_mapper\app\api\routes.py", line 183, in generate_mapping
+    raw_response, model_used = call_llm_with_fallback(prompt, app_config, max_tokens=4096)
+                               ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\Surya\Downloads\dwl_mapper (3)\dwl_mapper\app\services\llm_service.py", line 94, in call_llm_with_fallback
+    text = call_bedrock_model(prompt, model_id, app_config, max_tokens)
+  File "c:\Users\Surya\Downloads\dwl_mapper (3)\dwl_mapper\app\services\llm_service.py", line 68, in call_bedrock_model
+    response = requests.post(endpoint_url, headers=headers, data=payload_bytes, timeout=120)
+  File "C:\Users\Surya\AppData\Roaming\Python\Python313\site-packages\requests\api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+  File "C:\Users\Surya\AppData\Roaming\Python\Python313\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Surya\AppData\Roaming\Python\Python313\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\Surya\AppData\Roaming\Python\Python313\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\Surya\AppData\Roaming\Python\Python313\site-packages\requests\adapters.py", line 677, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='your-bedrock-gateway-endpoint.com', port=443): Max retries exceeded with url: /model/us.anthropic.claude-3-5-sonnet-20241022-v2:0/invoke (Caused by NameResolutionError("HTTPSConnection(host='your-bedrock-gateway-endpoint.com', port=443): Failed to resolve 'your-bedrock-gateway-endpoint.com' ([Errno 11001] getaddrinfo failed)"))
+[2026-06-06 23:52:46] INFO in _internal (_log:97): 127.0.0.1 - - [06/Jun/2026 23:52:46] "[35m[1mPOST /api/project/1/generate HTTP/1.1[0m" 500 -
+[2026-06-06 23:52:46] INFO in _internal (_log:97): 127.0.0.1 - - [06/Jun/2026 23:52:46] "GET /project/1 HTTP/1.1" 200 -

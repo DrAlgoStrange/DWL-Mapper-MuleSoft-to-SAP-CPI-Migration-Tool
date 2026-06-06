@@ -380,11 +380,6 @@
     formData.append('sample_input', document.getElementById('dwl-sample-in').value.trim());
     formData.append('sample_output', document.getElementById('dwl-sample-out').value.trim());
 
-    const srcFile = document.getElementById('src-file').files[0];
-    const tgtFile = document.getElementById('tgt-file').files[0];
-    if (srcFile) formData.append('source_schema', srcFile);
-    if (tgtFile) formData.append('target_schema', tgtFile);
-
     try {
       const res = await fetch(`/api/project/${PROJECT_ID}/dwl`, {
         method: 'POST', body: formData
